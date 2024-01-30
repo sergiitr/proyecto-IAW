@@ -116,7 +116,7 @@
                                     <th>Fecha entrega</th>
                                 </tr>';
                         echo '<tr align=center>';
-                        echo '<td><input type="checkbox" name="seleccionados[]" value="' . $idJuegoUltimo . '"> ' . $idJuegoUltimo. ' </td>';
+                        echo '<td>' . $idJuegoUltimo. ' </td>';
                         echo '<td>' . htmlspecialchars($ultimaLinea['id']) . '</td>';
                         echo '<td>' . $ultimaLinea['plataforma'] . '</td>';
                         echo '<td>' . $hoyStr  . '</td>';
@@ -134,16 +134,6 @@
                         echo '<form method="post" action="vaciarCarrito.php">
                                 <input type="submit" class="btn btn-danger" value="Vaciar Carrito">
                             </form>';
-
-                        echo '<button type="button" id="seleccionarTodos" class="btn btn-secondary">Seleccionar Todos</button>';
-                        echo '<script>
-                                document.getElementById("seleccionarTodos").addEventListener("click", function () {
-                                    var checkboxes = document.getElementsByName("seleccionados[]");
-                                    for (var i = 0; i < checkboxes.length; i++) {
-                                        checkboxes[i].checked = true;
-                                    }
-                                });
-                            </script>';
                     } else
                         echo '<p>El carrito está vacío.</p>';
                 ?>
