@@ -35,7 +35,15 @@
                                 </select>
                             </td>
                             <td class="tdDatos">
-                            <p class="username">¡Hola, ' . $_SESSION["usuario"] . '! <a id="logoutLink" class="logout-link">Cerrar sesión</a></p>
+                                <div class="user-info">
+                                    <p class="username">¡Hola, ',$_SESSION["usuario"],'!</p>
+                                    <select aria-label="Default select example" onchange="redirectPage2(this.value)">
+                                        <option selected disabled>Seleccione una opción</option>
+                                        <option value="pedidos">Mis pedidos</option>
+                                        <option value="cerrarSesion">Cerrar sesión</option>
+                                    </select>
+                                    <a id="logoutLink" class="logout-link" style="display: none;" onclick="cerrarSesion()">Cerrar sesión</a>
+                                </div>
                             </td>
                         ';
                     } else {
@@ -54,11 +62,28 @@
             </table>
         </div>
         <script>
+            var logoutLink = document.getElementById("logout-link");
             function redirectPage(value) {
                 if (value === "carrito")
                     window.location.href = "./carrito.php";
                 else if (value === "alquiler")
                     window.location.href = "./alquiler.php";
+            }
+            function redirectPage2(value) {
+                if (value === "pedidos") {
+                    window.location.href = "./cliente.php";
+                } else if (value === "cerrarSesion") {
+                    console.log("Cerrando sesión...");
+                    logoutLink.style.display = "block";
+                    cerrarSesion();
+                }
+            }
+
+            function cerrarSesion() {
+                // Aquí puedes realizar cualquier lógica necesaria antes de cerrar sesión (por ejemplo, limpiar las variables de sesión)
+                // Luego, redirige a la página de inicio de sesión o a donde desees
+                // En este caso, redirigimos a la página actual para simular un cierre de sesión en el frontend
+                window.location.href = './cerrarSesion.php';;
             }
         </script>
         <script>

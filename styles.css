@@ -845,3 +845,30 @@ select {
   color: blue;
   margin-left: 5%;
 }
+
+
+
+
+
+.card5 {
+  width: 22%;
+  margin-left: 8%;
+  margin-bottom: 2%;
+  height: 500px;
+  background: lightgray;
+  font-size: 25px;
+  font-weight: bold;
+  border-radius: 15px;
+  cursor: pointer;
+  display: inline-table;
+}
+
+
+.logout-link {
+  display: none; /* Por defecto, ocultar el enlace de cierre de sesión */
+}
+
+/* Mostrar el enlace de cierre de sesión cuando se hace hover en el párrafo de clase username */
+.user-info:hover .logout-link {
+  display: inline-block; /* Mostrar el enlace de cierre de sesión al hacer hover en username */
+}
