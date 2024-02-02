@@ -29,7 +29,7 @@
                         echo '
                             <td class="tdDatos">
                                 <select aria-label="Default select example" onchange="redirectPage(this.value)">
-                                    <option selected disabled>Seleccione una opción</option>
+                                    <option selected disabled>SELECCIONE CARRITO</option>
                                     <option value="carrito">CARRITO VENTA</option>
                                     <option value="alquiler">CARRITO ALQUILER</option>
                                 </select>
@@ -41,13 +41,13 @@
                                         <option selected disabled>Seleccione una opción</option>
                                         <option value="pedidos">Mis pedidos</option>
                                         <option value="cerrarSesion">Cerrar sesión</option>
+                                        <option value="borrarUsuario">Borrar Usuario</option>
                                     </select>
                                     <a id="logoutLink" class="logout-link" style="display: none;" onclick="cerrarSesion()">Cerrar sesión</a>
                                 </div>
                             </td>
                         ';
                     } else {
-                        // Si el usuario no ha iniciado sesión, mostrar los enlaces de "Crear Usuario" e "Inicio Sesión"
                         echo '
                             <td class="tdDatos">
                                 <p class="sobreNos"><a class="enlacePaginaActual" href="./crearUsuario.php">Crear Usuario</a></p>
@@ -76,14 +76,17 @@
                     console.log("Cerrando sesión...");
                     logoutLink.style.display = "block";
                     cerrarSesion();
+                }  else if (value === "borrarUsuario") {
+                    // Confirmar antes de borrar
+                    var confirmar = confirm("¿Está seguro de que desea borrar su usuario? Esta acción no se puede deshacer.");
+                    if (confirmar) {
+                        window.location.href = "./borrarUsuario.php";
+                    }
                 }
             }
 
             function cerrarSesion() {
-                // Aquí puedes realizar cualquier lógica necesaria antes de cerrar sesión (por ejemplo, limpiar las variables de sesión)
-                // Luego, redirige a la página de inicio de sesión o a donde desees
-                // En este caso, redirigimos a la página actual para simular un cierre de sesión en el frontend
-                window.location.href = './cerrarSesion.php';;
+                window.location.href = './cerrarSesion.php';
             }
         </script>
         <script>
@@ -100,11 +103,11 @@
 
         <div class="item mt-2">
             <?php
-                // Establecer la conexión a la base de datos (reemplaza los valores con los tuyos)
-                $host="localhost";
-                $user="root";
-                $pass="";
-                $database="tienda_videojuegos";
+                // Establecer la conexión a la base de datos
+                $host = "localhost";
+                $user = "root";
+                $pass = "";
+                $database = "tienda_videojuegos";
 
                 $conn = new mysqli($host, $user, $pass, $database);
 
@@ -113,64 +116,79 @@
                     die("La conexión falló: " . $conn->connect_error);
                 }
 
-                // Obtener el ID del usuario (reemplaza con el ID del usuario actual)
+                // Definir y crear el procedimiento almacenado si no existe
+                $crearProcedimiento = "
+                    CREATE PROCEDURE IF NOT EXISTS ObtenerPedidosCliente(IN _idUsuario VARCHAR(20))
+                    BEGIN
+                        SELECT compran.idPed, compran.total, juegos.nombre AS nombreJuego, detalle_pedido.cantidad
+                        FROM compran
+                        INNER JOIN detalle_pedido ON compran.idPed = detalle_pedido.idPed
+                        INNER JOIN juegos ON detalle_pedido.idJuego = juegos.idJuego
+                        WHERE compran.idUsuario = _idUsuario;
+                    END
+                ";
+
+                if (!$conn->multi_query($crearProcedimiento)) 
+                    echo "Error al crear el procedimiento almacenado: " . $conn->error;
+                
+                // Obtener el ID del usuario
                 $idUsuario = $_SESSION["usuario"];
 
-                // Consulta SQL para obtener los pedidos del cliente
-                $sql = "SELECT compran.idPed, compran.total, juegos.nombre AS nombreJuego, detalle_pedido.cantidad
-                        FROM compran, detalle_pedido, juegos
-                        WHERE compran.idPed = detalle_pedido.idPed and detalle_pedido.idJuego = juegos.idJuego and compran.idUsuario = '$idUsuario'";
+                // Preparar la llamada al procedimiento almacenado
+                if ($stmt = $conn->prepare("CALL ObtenerPedidosCliente(?)")) {
 
-                $result = $conn->query($sql);
-                if ($result === false) {
-                    die("Error en la consulta SQL: " . $conn->error);
-                }
-                // Verificar si hay resultados
-                if ($result->num_rows > 0) {
-                    // Crear un array para almacenar los pedidos agrupados
-                    $pedidosAgrupados = [];
-                
-                    while ($row = $result->fetch_assoc()) {
-                        // Obtener el ID del pedido
-                        $idPedido = $row['idPed'];
-                
-                        // Crear un array asociativo para almacenar la información del pedido
-                        if (!isset($pedidosAgrupados[$idPedido])) {
-                            $pedidosAgrupados[$idPedido] = [
-                                'idPed' => $idPedido,
-                                'total' => $row['total'],
-                                'detalles' => [],
+                    // Vincular el parámetro idUsuario al procedimiento almacenado
+                    $stmt->bind_param("s", $idUsuario);
+
+                    // Ejecutar el procedimiento almacenado
+                    $stmt->execute();
+
+                    // Obtener el resultado
+                    $result = $stmt->get_result();
+
+                    // Procesar los resultados
+                    if ($result->num_rows > 0) {
+                        $pedidosAgrupados = [];
+                        while ($row = $result->fetch_assoc()) {
+                            $idPedido = $row['idPed'];
+                    
+                            if (!isset($pedidosAgrupados[$idPedido])) {
+                                $pedidosAgrupados[$idPedido] = [
+                                    'idPed' => $idPedido,
+                                    'total' => $row['total'],
+                                    'detalles' => [],
+                                ];
+                            }
+                            $pedidosAgrupados[$idPedido]['detalles'][] = [
+                                'nombreJuego' => $row['nombreJuego'],
+                                'cantidad' => $row['cantidad'],
                             ];
                         }
-                
-                        // Agregar detalles del juego al array de detalles del pedido
-                        $pedidosAgrupados[$idPedido]['detalles'][] = [
-                            'nombreJuego' => $row['nombreJuego'],
-                            'cantidad' => $row['cantidad'],
-                        ];
-                    }
-                
-                    // Imprimir los pedidos agrupados
-                    echo '<div class="item mt-2">';
-                    foreach ($pedidosAgrupados as $pedido) {
-                        echo '<div class="card5">';
-                            echo '<h1>Pedido ID: ' . $pedido['idPed'] . '</h1>';
-                            foreach ($pedido['detalles'] as $detalle) {
-                                echo '<p>Juego: ' . $detalle['nombreJuego'] . '</p>';
-                                echo '<p>Cantidad: ' . $detalle['cantidad'] . '</p>';
+                    
+                        echo '<div class="item mt-2">';
+                        foreach ($pedidosAgrupados as $pedido) {
+                            echo '<div class="card5">';
+                                echo '<h1>Pedido ID: ' . $pedido['idPed'] . '</h1>';
+                                foreach ($pedido['detalles'] as $detalle) {
+                                    echo '<p>Juego: ' . $detalle['nombreJuego'] . '</p>';
+                                    echo '<p>Cantidad: ' . $detalle['cantidad'] . '</p>';
+                                    echo '<hr>';
+                                }
+                                echo '<p>Total: €' . $pedido['total'] . '</p>';
                                 echo '<hr>';
-                            }
-                            echo '<p>Total: €' . $pedido['total'] . '</p>';
-                            echo '<hr>';
+                            echo '</div>';
+                        }
                         echo '</div>';
-                    }
-                    echo '</div>';
-                } else
-                    echo '<p>No hay pedidos para este cliente.</p>';
-                // Cerrar la conexión
+                    } else
+                        echo '<p>No hay pedidos para este cliente.</p>';
+
+                    $stmt->close();
+                } else {
+                    echo "Error al preparar la llamada al procedimiento almacenado: " . $conn->error;
+                }
+
                 $conn->close();
             ?>
-
         </div>
 
         <div class="item mt-2">

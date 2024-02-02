@@ -26,7 +26,7 @@
                         echo '
                             <td class="tdDatos">
                                 <select aria-label="Default select example" onchange="redirectPage(this.value)">
-                                    <option selected disabled>Seleccione una opción</option>
+                                    <option selected disabled>SELECCIONE CARRITO</option>
                                     <option value="carrito">CARRITO VENTA</option>
                                     <option value="alquiler">CARRITO ALQUILER</option>
                                 </select>
@@ -38,13 +38,13 @@
                                         <option selected disabled>Seleccione una opción</option>
                                         <option value="pedidos">Mis pedidos</option>
                                         <option value="cerrarSesion">Cerrar sesión</option>
+                                        <option value="borrarUsuario">Borrar Usuario</option>
                                     </select>
                                     <a id="logoutLink" class="logout-link" style="display: none;" onclick="cerrarSesion()">Cerrar sesión</a>
                                 </div>
                             </td>
                         ';
                     } else {
-                        // Si el usuario no ha iniciado sesión, mostrar los enlaces de "Crear Usuario" e "Inicio Sesión"
                         echo '
                             <td class="tdDatos">
                                 <p class="sobreNos"><a class="enlacePaginaActual" href="./crearUsuario.php">Crear Usuario</a></p>
@@ -73,14 +73,17 @@
                     console.log("Cerrando sesión...");
                     logoutLink.style.display = "block";
                     cerrarSesion();
+                }  else if (value === "borrarUsuario") {
+                    // Confirmar antes de borrar
+                    var confirmar = confirm("¿Está seguro de que desea borrar su usuario? Esta acción no se puede deshacer.");
+                    if (confirmar) {
+                        window.location.href = "./borrarUsuario.php";
+                    }
                 }
             }
 
             function cerrarSesion() {
-                // Aquí puedes realizar cualquier lógica necesaria antes de cerrar sesión (por ejemplo, limpiar las variables de sesión)
-                // Luego, redirige a la página de inicio de sesión o a donde desees
-                // En este caso, redirigimos a la página actual para simular un cierre de sesión en el frontend
-                window.location.href = './cerrarSesion.php';;
+                window.location.href = './cerrarSesion.php';
             }
         </script>
         <script>
@@ -113,7 +116,6 @@
                         $id = 'card' . $contador;
                         $imagen = $valores['imagen'];
                         $idJuego = $valores['idJuego'];
-                        
                         echo '
                             <div class="card2">
                                 <div class="card" id="' . htmlspecialchars($id) . '">
@@ -191,8 +193,8 @@
                         </a>
                         <a class="social-link5">
                             <svg viewBox="0 0 16 16" class="bi bi-stack-overflow" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12.412 14.572V10.29h1.428V16H1v-5.71h1.428v4.282h9.984z"></path>
-                            <path d="M3.857 13.145h7.137v-1.428H3.857v1.428zM10.254 0 9.108.852l4.26 5.727 1.146-.852L10.254 0zm-3.54 3.377 5.484 4.567.913-1.097L7.627 2.28l-.914 1.097zM4.922 6.55l6.47 3.013.603-1.294-6.47-3.013-.603 1.294zm-.925 3.344 6.985 1.469.294-1.398-6.985-1.468-.294 1.397z"></path>
+                                <path d="M12.412 14.572V10.29h1.428V16H1v-5.71h1.428v4.282h9.984z"></path>
+                                <path d="M3.857 13.145h7.137v-1.428H3.857v1.428zM10.254 0 9.108.852l4.26 5.727 1.146-.852L10.254 0zm-3.54 3.377 5.484 4.567.913-1.097L7.627 2.28l-.914 1.097zM4.922 6.55l6.47 3.013.603-1.294-6.47-3.013-.603 1.294zm-.925 3.344 6.985 1.469.294-1.398-6.985-1.468-.294 1.397z"></path>
                             </svg>
                         </a>
                     </div>

@@ -24,7 +24,7 @@
                         echo '
                             <td class="tdDatos">
                                 <select aria-label="Default select example" onchange="redirectPage(this.value)">
-                                    <option selected disabled>Seleccione una opción</option>
+                                    <option selected disabled>SELECCIONE CARRITO</option>
                                     <option value="carrito">CARRITO VENTA</option>
                                     <option value="alquiler">CARRITO ALQUILER</option>
                                 </select>

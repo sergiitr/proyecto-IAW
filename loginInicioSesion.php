@@ -22,6 +22,6 @@
             } else
                 echo "No se ha iniciado sesion";
         } else
-            echo "No se ha iniciado sesion (2)";
+            echo "No se ha iniciado sesion";
     }
 ?>

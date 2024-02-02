@@ -28,7 +28,7 @@
                         echo '
                             <td class="tdDatos">
                                 <select aria-label="Default select example" onchange="redirectPage(this.value)">
-                                    <option selected disabled>Seleccione una opción</option>
+                                    <option selected disabled>SELECCIONE CARRITO</option>
                                     <option value="carrito">CARRITO VENTA</option>
                                     <option value="alquiler">CARRITO ALQUILER</option>
                                 </select>
@@ -40,13 +40,13 @@
                                         <option selected disabled>Seleccione una opción</option>
                                         <option value="pedidos">Mis pedidos</option>
                                         <option value="cerrarSesion">Cerrar sesión</option>
+                                        <option value="borrarUsuario">Borrar Usuario</option>
                                     </select>
                                     <a id="logoutLink" class="logout-link" style="display: none;" onclick="cerrarSesion()">Cerrar sesión</a>
                                 </div>
                             </td>
                         ';
                     } else {
-                        // Si el usuario no ha iniciado sesión, mostrar los enlaces de "Crear Usuario" e "Inicio Sesión"
                         echo '
                             <td class="tdDatos">
                                 <p class="sobreNos"><a class="enlacePaginaActual" href="./crearUsuario.php">Crear Usuario</a></p>
@@ -75,14 +75,17 @@
                     console.log("Cerrando sesión...");
                     logoutLink.style.display = "block";
                     cerrarSesion();
+                }  else if (value === "borrarUsuario") {
+                    // Confirmar antes de borrar
+                    var confirmar = confirm("¿Está seguro de que desea borrar su usuario? Esta acción no se puede deshacer.");
+                    if (confirmar) {
+                        window.location.href = "./borrarUsuario.php";
+                    }
                 }
             }
 
             function cerrarSesion() {
-                // Aquí puedes realizar cualquier lógica necesaria antes de cerrar sesión (por ejemplo, limpiar las variables de sesión)
-                // Luego, redirige a la página de inicio de sesión o a donde desees
-                // En este caso, redirigimos a la página actual para simular un cierre de sesión en el frontend
-                window.location.href = './cerrarSesion.php';;
+                window.location.href = './cerrarSesion.php';
             }
         </script>
         <script>

@@ -30,30 +30,6 @@
                         <p class="sobreNos"><a class="enlacePaginaActual" href="./nosotros.php">SOBRE NOSOTROS</a></p>
                     </td>
                     <?php
-                    if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) {
-                        // Si el usuario ha iniciado sesión, no mostrar los enlaces de "Crear Usuario" e "Inicio Sesión"
-                        echo '
-                            <td class="tdDatos">
-                                <select aria-label="Default select example" onchange="redirectPage(this.value)">
-                                    <option selected disabled>SELECCIONE CARRITO</option>
-                                    <option value="carrito">CARRITO VENTA</option>
-                                    <option value="alquiler">CARRITO ALQUILER</option>
-                                </select>
-                            </td>
-                            <td class="tdDatos">
-                                <div class="user-info">
-                                    <p class="username">¡Hola, ',$_SESSION["usuario"],'!</p>
-                                    <select aria-label="Default select example" onchange="redirectPage2(this.value)">
-                                        <option selected disabled>Seleccione una opción</option>
-                                        <option value="pedidos">Mis pedidos</option>
-                                        <option value="cerrarSesion">Cerrar sesión</option>
-                                        <option value="borrarUsuario">Borrar Usuario</option>
-                                    </select>
-                                    <a id="logoutLink" class="logout-link" style="display: none;" onclick="cerrarSesion()">Cerrar sesión</a>
-                                </div>
-                            </td>
-                        ';
-                    } else {
                         echo '
                             <td class="tdDatos">
                                 <p class="sobreNos"><a class="enlacePaginaActual" href="./crearUsuario.php">Crear Usuario</a></p>
@@ -62,7 +38,6 @@
                                 <p class="carrito"><a class="enlacesPaginas" href="./formInicioSesion.php">Inicio Sesion</a></p>
                             </td>
                         ';
-                    }
                     ?>
                 </tr>
             </table>
@@ -90,7 +65,6 @@
                     }
                 }
             }
-
             function cerrarSesion() {
                 window.location.href = './cerrarSesion.php';
             }
@@ -106,40 +80,51 @@
                 });
             <?php } ?>
         </script>
-        <div id="carouselExampleDark" class="carousel carousel-dark slide h-10" data-bs-ride="carousel">
-            <div class="carousel-indicators">
-                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
-            </div>
-            <div class="carousel-inner">
-                <div class="carousel-item active" data-bs-interval="10000">
-                    <img src="./imagenes/ps5.png" class="d-block w-100" class="imagenesConsolas">
-                    <div class="carousel-caption d-block">
-                        <h5 class="catalogos"><a href="./ps5.php">Catalogo PS5</a></h5>
-                    </div>
-                </div>
-                <div class="carousel-item" data-bs-interval="2000">
-                    <img src="./imagenes/xbox.png" class="d-block w-100" class="imagenesConsolas">
-                    <div class="carousel-caption d-block">
-                        <h5 class="catalogos"><a href="./xbox.php">Catalogo XBOX One</a></h5>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="./imagenes/pc.png" class="d-block w-100" class="imagenesConsolas">
-                    <div class="carousel-caption d-block">
-                        <h5 class="catalogos"><a href="./pc.php">Catalogo PC</a></h5>
-                    </div>
-                </div>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Anterior</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Siguiente</span>
-            </button>
+        <div>
+        <?php
+            $db_hostname = "localhost";
+            $db_database = "tienda_videojuegos";
+            $db_username = "root";
+            $db_password = "";
+            $conexion = mysqli_connect($db_hostname, $db_username, $db_password, $db_database);
+
+            if ($conexion->connect_error) 
+                die("Conexión fallida: " . $conexion->connect_error);
+
+            $idUsuario = $_SESSION["usuario"];
+
+            $sqlBorrarDetallesPedido = "DELETE FROM detalle_pedido WHERE idPed IN (SELECT idPed FROM compran WHERE idUsuario = '$idUsuario')";
+            $stmt = $conexion->prepare($sqlBorrarDetallesPedido);
+            if ($stmt === false) 
+                die("Error al preparar la consulta para borrar detalles de pedido: " . $conexion->error);
+
+            if (!$stmt->execute()) 
+                echo "Error al borrar detalles de pedidos del usuario: " . $stmt->error;
+
+            $sqlBorrarCompras = "DELETE FROM compran WHERE idUsuario = ?";
+            $stmt = $conexion->prepare($sqlBorrarCompras);
+            if ($stmt === false) 
+                die("Error al preparar la consulta para borrar compras: " . $conexion->error);
+
+            $stmt->bind_param("s", $idUsuario);
+
+            if (!$stmt->execute()) 
+                echo "Error al borrar compras del usuario: " . $stmt->error;
+
+            $sqlBorrarUsuario = "DELETE FROM usuarios WHERE idUsuario = ?";
+            $stmt = $conexion->prepare($sqlBorrarUsuario);
+            if ($stmt === false)
+                die("Error al preparar la consulta para borrar usuario: " . $conexion->error);
+
+            $stmt->bind_param("s", $idUsuario);
+            if ($stmt->execute())
+                echo "Usuario, sus compras y detalles de pedidos borrados exitosamente.";
+            else
+                echo "Error al borrar el usuario: " . $stmt->error;
+            $stmt->close();
+            $conexion->close();
+            session_destroy();
+        ?>
         </div>
         <div class="row item mt-2">
             <div class="izq">

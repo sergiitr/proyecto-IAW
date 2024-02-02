@@ -29,7 +29,7 @@
                         echo '
                             <td class="tdDatos">
                                 <select aria-label="Default select example" onchange="redirectPage(this.value)">
-                                    <option selected disabled>Seleccione una opción</option>
+                                    <option selected disabled>SELECCIONE CARRITO</option>
                                     <option value="carrito">CARRITO VENTA</option>
                                     <option value="alquiler">CARRITO ALQUILER</option>
                                 </select>
@@ -41,13 +41,13 @@
                                         <option selected disabled>Seleccione una opción</option>
                                         <option value="pedidos">Mis pedidos</option>
                                         <option value="cerrarSesion">Cerrar sesión</option>
+                                        <option value="borrarUsuario">Borrar Usuario</option>
                                     </select>
                                     <a id="logoutLink" class="logout-link" style="display: none;" onclick="cerrarSesion()">Cerrar sesión</a>
                                 </div>
                             </td>
                         ';
                     } else {
-                        // Si el usuario no ha iniciado sesión, mostrar los enlaces de "Crear Usuario" e "Inicio Sesión"
                         echo '
                             <td class="tdDatos">
                                 <p class="sobreNos"><a class="enlacePaginaActual" href="./crearUsuario.php">Crear Usuario</a></p>
@@ -76,23 +76,21 @@
                     console.log("Cerrando sesión...");
                     logoutLink.style.display = "block";
                     cerrarSesion();
+                }  else if (value === "borrarUsuario") {
+                    var confirmar = confirm("¿Está seguro de que desea borrar su usuario? Esta acción no se puede deshacer.");
+                    if (confirmar)
+                        window.location.href = "./borrarUsuario.php";
                 }
             }
 
             function cerrarSesion() {
-                // Aquí puedes realizar cualquier lógica necesaria antes de cerrar sesión (por ejemplo, limpiar las variables de sesión)
-                // Luego, redirige a la página de inicio de sesión o a donde desees
-                // En este caso, redirigimos a la página actual para simular un cierre de sesión en el frontend
-                window.location.href = './cerrarSesion.php';;
+                window.location.href = './cerrarSesion.php';
             }
         </script>
         <script>
             <?php if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) { ?>
-                // Si el usuario ha iniciado sesión
                 var logoutLink = document.getElementById('logoutLink');
-
                 logoutLink.addEventListener('click', function () {
-                    // Redirige a la página de cerrar sesión
                     window.location.href = './cerrarSesion.php';
                 });
             <?php } ?>
@@ -165,6 +163,37 @@
                         echo '  <input type="hidden" name="idUsuario" value="' . $id_Usuario . '">';
                         echo '  <input type="hidden" name="f_inicio" value="' . $hoyStr . '">';
                         echo '  <input type="hidden" name="f_fin" value="' . $nueva_fechaStr . '">';
+                        echo '  <div class="visa-card">
+                                    <div class="logoContainer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="23" height="23" viewBox="0 0 48 48" class="svgLogo" >
+                                            <path fill="#ff9800" d="M32 10A14 14 0 1 0 32 38A14 14 0 1 0 32 10Z"></path>
+                                            <path fill="#d50000" d="M16 10A14 14 0 1 0 16 38A14 14 0 1 0 16 10Z"></path>
+                                            <path fill="#ff3d00" d="M18,24c0,4.755,2.376,8.95,6,11.48c3.624-2.53,6-6.725,6-11.48s-2.376-8.95-6-11.48 C20.376,15.05,18,19.245,18,24z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="number-container">
+                                        <label class="input-label" for="cardNumber">CARD NUMBER</label>
+                                        <input class="inputstyle" id="cardNumber" placeholder="XXXX XXXX XXXX XXXX" name="cardNumber" type="text" required />
+                                    </div>
+                                
+                                    <div class="name-date-cvv-container">
+                                        <div class="name-wrapper">
+                                            <label class="input-label" for="holderName">CARD HOLDER</label>
+                                            <input class="inputstyle" id="holderName" placeholder="NAME" type="text" required/>
+                                        </div>
+                                    
+                                        <div class="expiry-wrapper">
+                                            <label class="input-label" for="expiry">VALID THRU</label>
+                                            <input class="inputstyle" id="expiry" placeholder="MM/YY" type="text" required/>
+                                        </div>
+                                        <div class="cvv-wrapper">
+                                            <label class="input-label" for="cvv">CVV</label>
+                                            <input class="inputstyle" placeholder="***" maxlength="3" id="cvv" type="password" required/>
+                                        </div>
+                                    </div>
+                                </div>
+                        
+                        ';
                         echo '  <input type="submit" class="btn btn-primary" value="Realizar Alquiler">';
                         echo '</form>';
                         echo '<form method="post" action="vaciarCarrito.php">
