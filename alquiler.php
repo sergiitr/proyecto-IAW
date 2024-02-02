@@ -196,7 +196,7 @@
                         ';
                         echo '  <input type="submit" class="btn btn-primary" value="Realizar Alquiler">';
                         echo '</form>';
-                        echo '<form method="post" action="vaciarCarrito.php">
+                        echo '<form method="post" action="vaciarcarritoAlquiler.php">
                                 <input type="submit" class="btn btn-danger" value="Vaciar Carrito">
                             </form>';
                     } else

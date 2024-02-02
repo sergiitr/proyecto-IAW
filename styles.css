@@ -3,13 +3,15 @@ body {
   overflow-x: hidden;
 }
 #psup {
-  background: linear-gradient(45deg, lightblue, lightgray, lightcyan);
+  /*background: linear-gradient(45deg, lightblue, lightgray, lightcyan);*/
   height: auto;
   display: grid;
   justify-content: center;
   align-items: center;
   align-content: stretch;
   font-family:"Pixelify Sans";
+  background-image: url("./imagenes/videojuegos-video.gif");
+  background-position:center;
 }
 .tdDatos {
   padding-left: 5%;
@@ -874,11 +876,7 @@ select {
   justify-content: flex-end;
   width: 300px;
   height: 180px;
-  background-image: radial-gradient(
-    circle 897px at 9% 80.3%,
-    rgb(255, 0, 0) 0%,
-    rgba(234, 161, 15, 0.9) 100.2%
-  );
+  background-image: radial-gradient(circle 897px at 9% 80.3%,rgb(255, 0, 0) 0%,rgba(234, 161, 15, 0.9) 100.2%);
   border-radius: 10px;
   padding: 20px;
   font-family: Arial, Helvetica, sans-serif;

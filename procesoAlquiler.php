@@ -63,51 +63,44 @@
             <div class="row">
                 <?php
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                        $idUsuario = $_POST['idUsuario'];
                         $host = "localhost";
                         $user = "root";
                         $pass = "";
                         $database = "tienda_videojuegos";
                         $conexion = mysqli_connect($host, $user, $pass, $database);
-                        $idJuego = $_POST['idJuego'];
-                        $idUsuario = $_POST['idUsuario'];
-                        $f_inicio = $_POST['f_inicio'];
-                        $f_fin = $_POST['f_fin'];
+
                         if (!$conexion)
                             die("Error de conexión a la base de datos: " . mysqli_connect_error());
 
+                        $idJuego = mysqli_real_escape_string($conexion, $_POST['idJuego']);
+                        $idUsuario = mysqli_real_escape_string($conexion, $_POST['idUsuario']);
+                        $f_inicio = mysqli_real_escape_string($conexion, $_POST['f_inicio']);
+                        $f_fin = mysqli_real_escape_string($conexion, $_POST['f_fin']);
+
+                        // Insertar el alquiler en la tabla 'alquilan'
                         $query = "INSERT INTO alquilan (idJuego, idUsuario, f_inicio, f_fin) VALUES ('$idJuego', '$idUsuario', '$f_inicio', '$f_fin')";
                         $resultado = mysqli_query($conexion, $query);
 
                         if (!$resultado) 
                             die("Error al realizar el alquiler: " . mysqli_error($conexion));
-                        
-                        $query2 = "UPDATE juegos SET stock = stock - 1 WHERE idJuego = '$idJuego'";
-                        $resultado2 = mysqli_query($conexion, $query2);
 
-                        if (!$resultado2)
-                            die("Error al actualizar el stock: " . mysqli_error($conexion));
+                        // No necesitamos actualizar el stock aquí, el trigger se encargará de esto.
 
                         unset($_SESSION['carrito']);
 
+                        // Asegurarse de que el procedimiento almacenado exista sin intentar crearlo cada vez
                         $procedimientoSQL = "
-                            DROP PROCEDURE IF EXISTS DevolverJuegoProcedure;
-                            CREATE PROCEDURE DevolverJuegoProcedure(IN juegoID INT, IN usuarioID INT)
+                            CREATE PROCEDURE IF NOT EXISTS DevolverJuegoProcedure(IN juegoID INT, IN usuarioID INT)
                             BEGIN
                                 UPDATE juegos SET stock = stock + 1 WHERE idJuego = juegoID;
                             END;
                         ";
 
-                        $resultadoProcedimiento = mysqli_multi_query($conexion, $procedimientoSQL);
-
-                        while(mysqli_next_result($conexion)) {
-                            if (!mysqli_more_results($conexion)) 
-                                break;
+                        if (!mysqli_query($conexion, $procedimientoSQL)) {
+                            die("Error al verificar/crear el procedimiento almacenado: " . mysqli_error($conexion));
                         }
 
-                        if (!$resultadoProcedimiento) 
-                            die("Error al crear el procedimiento almacenado: " . mysqli_error($conexion));
-
+                        // Crear el evento de devolución solo si no existe, de otra manera, actualizarlo.
                         $eventoDevolucion = "CREATE EVENT IF NOT EXISTS devolver_juego
                                             ON SCHEDULE AT '$f_fin'
                                             DO
@@ -119,11 +112,12 @@
 
                         if (!$resultadoEvento)
                             die("Error al programar el evento de devolución: " . mysqli_error($conexion));
-                        
+
                         echo '<p>Alquiler realizado con éxito.</p>';
                         mysqli_close($conexion);
                     }
                 ?>
+
                 <a href="./index.php"><button class="ejemplo">
                     <span class="span-mother">
                         <span>V</span>

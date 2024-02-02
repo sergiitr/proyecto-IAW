@@ -25,7 +25,6 @@
                     </td>
                     <?php
                     if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) {
-                        // Si el usuario ha iniciado sesión, no mostrar los enlaces de "Crear Usuario" e "Inicio Sesión"
                         echo '
                             <td class="tdDatos">
                                 <select aria-label="Default select example" onchange="redirectPage(this.value)">
@@ -77,11 +76,9 @@
                     logoutLink.style.display = "block";
                     cerrarSesion();
                 }  else if (value === "borrarUsuario") {
-                    // Confirmar antes de borrar
                     var confirmar = confirm("¿Está seguro de que desea borrar su usuario? Esta acción no se puede deshacer.");
-                    if (confirmar) {
+                    if (confirmar)
                         window.location.href = "./borrarUsuario.php";
-                    }
                 }
             }
 
@@ -91,11 +88,9 @@
         </script>
         <script>
             <?php if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) { ?>
-                // Si el usuario ha iniciado sesión
                 var logoutLink = document.getElementById('logoutLink');
 
                 logoutLink.addEventListener('click', function () {
-                    // Redirige a la página de cerrar sesión
                     window.location.href = './cerrarSesion.php';
                 });
             <?php } ?>
@@ -168,7 +163,7 @@
                         echo '<div class="item mt-2">';
                         foreach ($pedidosAgrupados as $pedido) {
                             echo '<div class="card5">';
-                                echo '<h1>Pedido ID: ' . $pedido['idPed'] . '</h1>';
+                                echo '<h1 align=center>Pedido ID: ' . $pedido['idPed'] . '</h1><hr>';
                                 foreach ($pedido['detalles'] as $detalle) {
                                     echo '<p>Juego: ' . $detalle['nombreJuego'] . '</p>';
                                     echo '<p>Cantidad: ' . $detalle['cantidad'] . '</p>';
@@ -181,12 +176,9 @@
                         echo '</div>';
                     } else
                         echo '<p>No hay pedidos para este cliente.</p>';
-
                     $stmt->close();
-                } else {
+                } else
                     echo "Error al preparar la llamada al procedimiento almacenado: " . $conn->error;
-                }
-
                 $conn->close();
             ?>
         </div>

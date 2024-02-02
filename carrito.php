@@ -69,14 +69,13 @@
                     window.location.href = "./alquiler.php";
             }
             function redirectPage2(value) {
-                if (value === "pedidos") {
+                if (value === "pedidos")
                     window.location.href = "./cliente.php";
-                } else if (value === "cerrarSesion") {
+                else if (value === "cerrarSesion") {
                     console.log("Cerrando sesión...");
                     logoutLink.style.display = "block";
                     cerrarSesion();
                 }  else if (value === "borrarUsuario") {
-                    // Confirmar antes de borrar
                     var confirmar = confirm("¿Está seguro de que desea borrar su usuario? Esta acción no se puede deshacer.");
                     if (confirmar)
                         window.location.href = "./borrarUsuario.php";
@@ -89,9 +88,7 @@
         </script>
         <script>
             <?php if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) { ?>
-                // Si el usuario ha iniciado sesión
                 var logoutLink = document.getElementById('logoutLink');
-
                 logoutLink.addEventListener('click', function () {
                     // Redirige a la página de cerrar sesión
                     window.location.href = './cerrarSesion.php';
@@ -132,14 +129,14 @@
 
                         if (isset($_SESSION['carrito'][$idUnico])) {
                             $cantidadEnCarrito = $_SESSION['carrito'][$idUnico]['cantidad'];
-                            // Verificar si la cantidad en el carrito no supera el stock disponible
-                            if ($cantidadEnCarrito < $stock) {
-                                $_SESSION['carrito'][$idUnico]['cantidad'] += $_POST['cantidad'];
-                                $_SESSION['carrito'][$idUnico]['total'] = $_SESSION['carrito'][$idUnico]['cantidad'] * $precio;
+                            $nuevaCantidad = $cantidadEnCarrito + $_POST['cantidad']; // Suma la cantidad actual en el carrito con la nueva cantidad
+                            if ($nuevaCantidad <= $stock) {
+                                $_SESSION['carrito'][$idUnico]['cantidad'] = $nuevaCantidad;
+                                $_SESSION['carrito'][$idUnico]['total'] = $nuevaCantidad * $precio;
                             } else
                                 echo "No se pueden agregar más unidades de este juego al carrito debido a la falta de stock.";
                         } else {
-                            // Si no está en el carrito, agrégalo
+                            // Si el producto no está en el carrito, verificar directamente con el stock
                             if ($_POST['cantidad'] <= $stock) {
                                 $_SESSION['carrito'][$idUnico] = [
                                     'id_Juego' => $_POST['iddelJuego'],
@@ -157,7 +154,7 @@
 
                     if (isset($_SESSION['carrito']) && count($_SESSION['carrito']) > 0) {
                         $agrupadoPorJuego = [];
-                        $primerItem = reset($_SESSION['carrito']); // Obtener el primer elemento del carrito
+                        $primerItem = reset($_SESSION['carrito']);
                         $precio = $primerItem['total'] / $primerItem['cantidad'];
                         foreach ($_SESSION['carrito'] as $item) {
                             $idJuego = $item['id_Juego'];
@@ -187,10 +184,10 @@
                         foreach ($agrupadoPorJuego as $idJuego => $item) {
                             echo '<tr align=center>';
                             echo '<td>' . htmlspecialchars($idJuego) . ' </td>';
-                            echo '<td>' . htmlspecialchars($item['nombre']) . '</td>';
-                            echo '<td>' . htmlspecialchars($item['cantidad']) . '</td>';
-                            echo '<td>' . htmlspecialchars($item['plataforma']) . '</td>';
-                            echo '<td>' . htmlspecialchars($item['total']) . '</td>';
+                            echo '  <td>' . htmlspecialchars($item['nombre']) . '</td>';
+                            echo '  <td>' . htmlspecialchars($item['cantidad']) . '</td>';
+                            echo '  <td>' . htmlspecialchars($item['plataforma']) . '</td>';
+                            echo '  <td>' . htmlspecialchars($item['total']) . '</td>';
                             echo '</tr>';
                         }
                         echo '  <tr align=center>';
