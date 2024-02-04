@@ -83,9 +83,6 @@
 
                         if (!$resultado) 
                             die("Error al realizar el alquiler: " . mysqli_error($conexion));
-
-                        // No necesitamos actualizar el stock aquí, el trigger se encargará de esto.
-
                         unset($_SESSION['carrito']);
 
                         // Asegurarse de que el procedimiento almacenado exista sin intentar crearlo cada vez
@@ -96,9 +93,8 @@
                             END;
                         ";
 
-                        if (!mysqli_query($conexion, $procedimientoSQL)) {
+                        if (!mysqli_query($conexion, $procedimientoSQL))
                             die("Error al verificar/crear el procedimiento almacenado: " . mysqli_error($conexion));
-                        }
 
                         // Crear el evento de devolución solo si no existe, de otra manera, actualizarlo.
                         $eventoDevolucion = "CREATE EVENT IF NOT EXISTS devolver_juego

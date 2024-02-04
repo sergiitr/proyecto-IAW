@@ -98,103 +98,95 @@
         <div class="item container-fluid mt-4">
             <div class="row">
                 <h1>Carrito de Compras</h1>
-                <?php
-                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                        $host = "localhost";
-                        $user = "root";
-                        $pass = "";
-                        $database = "tienda_videojuegos";
+                <?php 
+                    $host = "localhost";
+                    $user = "root";
+                    $pass = "";
+                    $database = "tienda_videojuegos";
 
-                        $conexion = mysqli_connect($host, $user, $pass, $database);
+                    $conexion = mysqli_connect($host, $user, $pass, $database);
+                    if (!$conexion) {
+                        die("Error de conexión a la base de datos: " . mysqli_connect_error());
+                    }
 
-                        if (!$conexion)
-                            die("Error de conexión a la base de datos: " . mysqli_connect_error());
-
-                        $nombreJuego = mysqli_real_escape_string($conexion, $_POST['id']);
-                        $query = "SELECT precio, stock FROM juegos WHERE nombre = '$nombreJuego'";
-                        $resultado = mysqli_query($conexion, $query);
-
-                        if ($resultado) {
-                            $fila = mysqli_fetch_assoc($resultado);
-                            $precio = $fila['precio'];
-                            $stock = $fila['stock'];
-                            mysqli_free_result($resultado);
-                        } else 
-                            die("Error en la consulta: " . mysqli_error($conexion));
-                        mysqli_close($conexion);
-                        if (!isset($_SESSION['carrito']))
-                            $_SESSION['carrito'] = [];
-
-                        $idUnico = isset($_POST['iddelJuego']) ? $_POST['iddelJuego'] : '';
-
-                        if (isset($_SESSION['carrito'][$idUnico])) {
-                            $cantidadEnCarrito = $_SESSION['carrito'][$idUnico]['cantidad'];
-                            $nuevaCantidad = $cantidadEnCarrito + $_POST['cantidad']; // Suma la cantidad actual en el carrito con la nueva cantidad
-                            if ($nuevaCantidad <= $stock) {
-                                $_SESSION['carrito'][$idUnico]['cantidad'] = $nuevaCantidad;
-                                $_SESSION['carrito'][$idUnico]['total'] = $nuevaCantidad * $precio;
-                            } else
-                                echo "No se pueden agregar más unidades de este juego al carrito debido a la falta de stock.";
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['iddelJuego'])) {
+                        if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) {
+                            $idJuego = mysqli_real_escape_string($conexion, $_POST['iddelJuego']);
+                            $cantidadSolicitada = isset($_POST['cantidad']) ? (int)$_POST['cantidad'] : 0;
+                            $plataforma = mysqli_real_escape_string($conexion, $_POST['plataforma']);
+                            
+                            $query = "SELECT nombre, precio, stock FROM juegos WHERE idJuego = '$idJuego'";
+                            $resultado = mysqli_query($conexion, $query);
+                            
+                            if ($fila = mysqli_fetch_assoc($resultado)) {
+                                $cantidadEnCarrito = isset($_SESSION['carrito'][$idJuego]) ? $_SESSION['carrito'][$idJuego]['cantidad'] : 0;
+                                $nuevaCantidad = $cantidadEnCarrito + $cantidadSolicitada;
+                                
+                                if ($nuevaCantidad <= $fila['stock']) {
+                                    $_SESSION['carrito'][$idJuego] = [
+                                        'nombre' => $fila['nombre'],
+                                        'cantidad' => $nuevaCantidad,
+                                        'plataforma' => $plataforma,
+                                        'precio' => $fila['precio'],
+                                        'total' => $nuevaCantidad * $fila['precio']
+                                    ];
+                                    echo "<p>Producto añadido al carrito correctamente.</p>";
+                                } else {
+                                    echo "<p>No se pueden añadir más unidades de este producto debido a limitaciones de stock.</p>";
+                                }
+                            } else {
+                                echo "<p>Producto no encontrado.</p>";
+                            }
                         } else {
-                            // Si el producto no está en el carrito, verificar directamente con el stock
-                            if ($_POST['cantidad'] <= $stock) {
-                                $_SESSION['carrito'][$idUnico] = [
-                                    'id_Juego' => $_POST['iddelJuego'],
-                                    'id' => $nombreJuego,
-                                    'cantidad' => $_POST['cantidad'],
-                                    'plataforma' => $_POST['plataforma'],
-                                    'total' => $_POST['cantidad'] * $precio
-                                ];
-                            } else
-                                echo "No hay suficiente stock disponible para agregar este juego al carrito.";
+                            echo "<p>Debe iniciar sesión para agregar productos al carrito.</p>";
                         }
                     }
 
-                    $id_Usuario = isset($_SESSION["usuario"]) ? $_SESSION["usuario"] : '';
+                    $descuento = 0;
+                    if (isset($_SESSION['usuario'])) {
+                        $id_Usuario = mysqli_real_escape_string($conexion, $_SESSION["usuario"]);
+                        $resultadoDescuento = mysqli_query($conexion, "SELECT DescuentoPorFidelidad('$id_Usuario') AS descuento");
 
-                    if (isset($_SESSION['carrito']) && count($_SESSION['carrito']) > 0) {
-                        $agrupadoPorJuego = [];
-                        $primerItem = reset($_SESSION['carrito']);
-                        $precio = $primerItem['total'] / $primerItem['cantidad'];
-                        foreach ($_SESSION['carrito'] as $item) {
-                            $idJuego = $item['id_Juego'];
-                            if (!isset($agrupadoPorJuego[$idJuego])) {
-                                $agrupadoPorJuego[$idJuego] = [
-                                    'nombre' => $item['id'],
-                                    'cantidad' => 0,
-                                    'plataforma' => $item['plataforma'],
-                                    'total' => $item['cantidad'] * $precio
-                                ];
+                        if ($resultadoDescuento) {
+                            $filaDescuento = mysqli_fetch_assoc($resultadoDescuento);
+                            if ($filaDescuento && array_key_exists('descuento', $filaDescuento)) {
+                                $descuento = $filaDescuento['descuento'];
+                            } else {
+                                // Manejar el caso en que la columna 'descuento' no exista en el resultado
+                                echo "La columna 'descuento' no está definida en el resultado.";
                             }
-                            $agrupadoPorJuego[$idJuego]['cantidad'] += $item['cantidad'];
                         }
-
-                        $totalGeneral = 0;
-                        foreach ($agrupadoPorJuego as $idJuego => $item)
-                            $totalGeneral += $item['total'];
-                        
-                        echo '<table class="table table-dark table-striped">';
-                        echo '  <tr align=center>
-                                    <th>idProd</th>
-                                    <th>Producto</th>
-                                    <th>Cantidad</th>
-                                    <th>Plataforma</th>
-                                    <th>Precio</th>
-                                </tr>';
-                        foreach ($agrupadoPorJuego as $idJuego => $item) {
-                            echo '<tr align=center>';
-                            echo '<td>' . htmlspecialchars($idJuego) . ' </td>';
-                            echo '  <td>' . htmlspecialchars($item['nombre']) . '</td>';
-                            echo '  <td>' . htmlspecialchars($item['cantidad']) . '</td>';
-                            echo '  <td>' . htmlspecialchars($item['plataforma']) . '</td>';
-                            echo '  <td>' . htmlspecialchars($item['total']) . '</td>';
-                            echo '</tr>';
+                    }
+                    $totalGeneral = 0;
+                    if (isset($_SESSION['carrito']) && count($_SESSION['carrito']) > 0) {
+                        echo "<table class='table table-dark table-striped'>";
+                        echo "<tr>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Plataforma</th>
+                                <th>Precio Unitario</th>
+                                <th>Subtotal</th>
+                            </tr>";
+                        foreach ($_SESSION['carrito'] as $idJuego => $item) {
+                            $subtotal = $item['precio'] * $item['cantidad'];
+                            echo "<tr>
+                                    <td>{$item['nombre']}</td>
+                                    <td>{$item['cantidad']}</td>
+                                    <td>{$item['plataforma']}</td>
+                                    <td>\${$item['precio']}</td>
+                                    <td>\${$subtotal}</td>
+                                </tr>";
+                            $totalGeneral += $subtotal;
                         }
-                        echo '  <tr align=center>';
-                        echo '      <td colspan="4"><strong>Total precio</strong></td>';
-                        echo '      <td><strong>' . $totalGeneral . '</strong></td>';
-                        echo '  </tr>';
-                        echo '</table>';
+                        $descuentoValor = ($totalGeneral * $descuento) / 100;
+                        $totalConDescuento = $totalGeneral - $descuentoValor;
+                        echo "<tr>
+                                <td colspan='4'>Descuento aplicado</td><td>-$descuentoValor</td>
+                            </tr>
+                            <tr>
+                                <td colspan='4'>Total</td><td>\$$totalConDescuento</td>
+                            </tr>
+                        </table>";
 
                         echo '<form method="post" action="procesoCompra.php">';
                         echo '  <input type="hidden" name="idJuego" value="' . (isset($_POST['iddelJuego']) ? $_POST['iddelJuego'] : '') . '">';
@@ -237,9 +229,12 @@
                         echo '<form method="post" action="vaciarCarrito.php">
                                 <input type="submit" class="btn btn-danger" value="Vaciar Carrito">
                             </form>';
-                    } else 
-                        echo '<p>El carrito está vacío.</p>';
+                    } else {
+                        echo "<p>Tu carrito está vacío.</p>";
+                    }
+                    mysqli_close($conexion);
                 ?>
+
             </div>
         </div>
         <footer>

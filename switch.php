@@ -1,6 +1,4 @@
-<?php
-    session_start();
-?>
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="es">
     <head>
@@ -8,8 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
         <title>Proyecto</title>
-        <link rel="shortcut icon" href="./imagenes/logo.jpeg"/>
         <link rel="stylesheet" href="styles.css">
+        <link rel="shortcut icon" href="./imagenes/logo.jpeg"/>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     </head>
     <body>
@@ -69,9 +67,9 @@
                     window.location.href = "./alquiler.php";
             }
             function redirectPage2(value) {
-                if (value === "pedidos")
+                if (value === "pedidos") {
                     window.location.href = "./cliente.php";
-                else if (value === "cerrarSesion") {
+                } else if (value === "cerrarSesion") {
                     console.log("Cerrando sesión...");
                     logoutLink.style.display = "block";
                     cerrarSesion();
@@ -82,7 +80,6 @@
                         window.location.href = "./borrarUsuario.php";
                 }
             }
-
             function cerrarSesion() {
                 window.location.href = './cerrarSesion.php';
             }
@@ -93,41 +90,76 @@
                 var logoutLink = document.getElementById('logoutLink');
 
                 logoutLink.addEventListener('click', function () {
-                    // Redirige a la página de cerrar sesión
                     window.location.href = './cerrarSesion.php';
                 });
             <?php } ?>
         </script>
-        <div class="item container-fluid mt-4" id="zona">
-            <div class="container" id="container2">
-                <div class="row">
-                    <div class="col-12 col-md-6">
-                        <h1><b>SOBRE NOSOTROS</b></h1>
-                        <h2><b>JUEGOS DE PRIMERAS MARCAS</b></h2>
-                        <p class="descripcionEmpresa">
-                            ¡Bienvenidos a nuestra tienda de videojuegos en Úbeda, donde la pasión por los juegos cobra vida! Desde nuestra fundación en diciembre de 2023, nos hemos esforzado por ofrecer la experiencia de juego definitiva para todos los gamers de la región.
-                            <br>
-                            En nuestro compromiso por brindarte lo mejor, trabajamos incansablemente con los proveedores más destacados de la industria. Contamos con un equipo excepcional, apasionado y dedicado, listo para satisfacer tus necesidades y brindarte el servicio que te mereces.
-                            <br>
-                            Entendemos que para ti, gamer, los juegos son más que entretenimiento; son una forma de vida. Con nuestra página, hemos simplificado el acceso a tus juegos favoritos. Con solo un clic, podrás explorar y adquirir los títulos más emocionantes del momento, o incluso optar por alquilarlos para variar tu experiencia de juego.
-                            <br>
-                            En esta tienda, no solo encontrarás productos de alta calidad, sino también un lugar donde compartir tu amor por los videojuegos. ¡Únete a nuestra comunidad y descubre un espacio donde la diversión y la emoción nunca tienen límites!
-                            <br>
-                            Gracias por elegirnos. ¡Prepárate para sumergirte en un mundo lleno de aventuras y desafíos! ¡Game on! 🎮✨
-                        </p>
-                    </div>
-                    <div class="col-12 col-md-6 divSobreNos">
-                        <img class="fotoSobreNos img-fluid" src="./imagenes/logo.jpeg">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="item container-fluid mt-1">
-            <div class="container" id="container2">
-                <div class="row">
-                    <h1><b>¿Donde nos situamos?</b></h1>
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d25146.335439614882!2d-3.393184692212728!3d38.01697321355801!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd6ef37e5ccd3a0d%3A0x1b0aa11ffc43dc15!2sInstituto%20de%20Educaci%C3%B3n%20Secundaria%20Los%20Cerros!5e0!3m2!1ses!2ses!4v1705063565445!5m2!1ses!2ses" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                </div>
+        <div class="item container-fluid mt-4">
+            <div class="row">
+                <?php require_once "login.php";
+                    $conexion=mysqli_connect($host,$user,$pass,$database);
+                    mysqli_select_db($conexion,$database);
+                    if (!$conexion)
+                        echo "Error de conexion";
+                ?>
+                <?php
+                    $resultado = mysqli_query($conexion, "select idJuego, nombre, stock, imagen, precio, plataforma from juegos where plataforma='switch'");
+                    $contador = 1;
+                    while ($valores = mysqli_fetch_assoc($resultado)) {
+                        $nombre = $valores['nombre'];
+                        $stock = $valores['stock'];
+                        $precio = $valores['precio'];
+                        $plataforma = $valores['plataforma'];
+                        $id = 'card' . $contador;
+                        $imagen = $valores['imagen'];
+                        $idJuego = $valores['idJuego'];
+                        echo '
+                            <div class="card2">
+                                <div class="card" id="' . htmlspecialchars($id) . '">
+                                    <h2>', $nombre, '</h2>
+                                   <img src="data:image/jpg; base64,', base64_encode($imagen), '" height="70%" width="50%">
+                                </div>
+                        ';
+                        if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) {
+                            echo '<div class="card3">
+                                    <form action="carrito.php" method="post">
+                                        <input type="hidden" name="iddelJuego" value="',$idJuego,'">
+                                        <input type="hidden" name="plataforma" value="switch">
+                                        <input type="hidden" name="precio" value="',$precio,'">
+                                        Cantidad: <input name="cantidad" type="number" min="0" max="100" step="1" required/>
+                                        <input name="id" type="hidden" value="', $nombre, '"/>
+                                        <button class="CartBtn">
+                                            <span class="IconContainer"> 
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512" fill="rgb(17, 17, 17)" class="cart"><path d="M0 24C0 10.7 10.7 0 24 0H69.5c22 0 41.5 12.8 50.6 32h411c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3H170.7l5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24 10.7 24 24s-10.7 24-24 24H199.7c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5H24C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"></path></svg>
+                                            </span>
+                                            <p class="text">Añadir al <br>carrito</p>
+                                        </button>
+                                        
+                                    </form>
+                                    <form action="alquiler.php" method="post">
+                                        <input type="hidden" name="iddelJuego" value="',$idJuego,'">
+                                        <input type="hidden" name="plataforma" value="switch">
+                                        <input type="hidden" name="precio" value="',$precio,'">
+                                        <input name="id" type="hidden" value="', $nombre, '"/>
+                                        <button class="CartBtn">
+                                            <span class="IconContainer"> 
+                                                <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512" fill="rgb(17, 17, 17)" class="cart"><path d="M0 24C0 10.7 10.7 0 24 0H69.5c22 0 41.5 12.8 50.6 32h411c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3H170.7l5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24 10.7 24 24s-10.7 24-24 24H199.7c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5H24C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"></path></svg>
+                                            </span>
+                                            <p class="text">Alquilar</p>
+                                        </button>
+                                    </form>
+                                </div>';
+                        }
+                        echo'    </div>';
+                        echo '<style>
+                                #' . htmlspecialchars($id) . ':hover:after {
+                                    content: "Stock: ' . $stock . ' \A Precio: ' . $precio . '";
+                                    white-space: pre-wrap;
+                                }
+                            </style>';
+                        $contador++;
+                    }
+                ?>
             </div>
         </div>
         <div class="item mt-2">
@@ -158,8 +190,8 @@
                         </a>
                         <a class="social-link5">
                             <svg viewBox="0 0 16 16" class="bi bi-stack-overflow" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12.412 14.572V10.29h1.428V16H1v-5.71h1.428v4.282h9.984z"></path>
-                            <path d="M3.857 13.145h7.137v-1.428H3.857v1.428zM10.254 0 9.108.852l4.26 5.727 1.146-.852L10.254 0zm-3.54 3.377 5.484 4.567.913-1.097L7.627 2.28l-.914 1.097zM4.922 6.55l6.47 3.013.603-1.294-6.47-3.013-.603 1.294zm-.925 3.344 6.985 1.469.294-1.398-6.985-1.468-.294 1.397z"></path>
+                                <path d="M12.412 14.572V10.29h1.428V16H1v-5.71h1.428v4.282h9.984z"></path>
+                                <path d="M3.857 13.145h7.137v-1.428H3.857v1.428zM10.254 0 9.108.852l4.26 5.727 1.146-.852L10.254 0zm-3.54 3.377 5.484 4.567.913-1.097L7.627 2.28l-.914 1.097zM4.922 6.55l6.47 3.013.603-1.294-6.47-3.013-.603 1.294zm-.925 3.344 6.985 1.469.294-1.398-6.985-1.468-.294 1.397z"></path>
                             </svg>
                         </a>
                     </div>

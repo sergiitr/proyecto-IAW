@@ -158,12 +158,12 @@
                         echo '</tr>';
                         echo '</table>';
                         
-                        echo '<form method="post" action="procesoAlquiler.php">';
-                        echo '  <input type="hidden" name="idJuego" value="' . $idJuegoUltimo . '">';
-                        echo '  <input type="hidden" name="idUsuario" value="' . $id_Usuario . '">';
-                        echo '  <input type="hidden" name="f_inicio" value="' . $hoyStr . '">';
-                        echo '  <input type="hidden" name="f_fin" value="' . $nueva_fechaStr . '">';
-                        echo '  <div class="visa-card">
+                        echo '<form method="post" action="procesoAlquiler.php">
+                                <input type="hidden" name="idJuego" value="' . $idJuegoUltimo . '">
+                                <input type="hidden" name="idUsuario" value="' . $id_Usuario . '">
+                                <input type="hidden" name="f_inicio" value="' . $hoyStr . '">
+                                <input type="hidden" name="f_fin" value="' . $nueva_fechaStr . '">
+                                <div class="visa-card">
                                     <div class="logoContainer">
                                         <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="23" height="23" viewBox="0 0 48 48" class="svgLogo" >
                                             <path fill="#ff9800" d="M32 10A14 14 0 1 0 32 38A14 14 0 1 0 32 10Z"></path>
@@ -193,10 +193,9 @@
                                     </div>
                                 </div>
                         
-                        ';
-                        echo '  <input type="submit" class="btn btn-primary" value="Realizar Alquiler">';
-                        echo '</form>';
-                        echo '<form method="post" action="vaciarcarritoAlquiler.php">
+                                <input type="submit" class="btn btn-primary" value="Realizar Alquiler">
+                            </form>
+                            <form method="post" action="vaciarcarritoAlquiler.php">
                                 <input type="submit" class="btn btn-danger" value="Vaciar Carrito">
                             </form>';
                     } else

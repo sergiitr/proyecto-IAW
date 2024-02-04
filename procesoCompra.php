@@ -22,7 +22,6 @@
                     </td>
                     <?php
                     if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) {
-                        // Si el usuario ha iniciado sesión, no mostrar los enlaces de "Crear Usuario" e "Inicio Sesión"
                         echo '
                             <td class="tdDatos">
                                 <select aria-label="Default select example" onchange="redirectPage(this.value)">
@@ -36,7 +35,6 @@
                             </td>
                         ';
                     } else {
-                        // Si el usuario no ha iniciado sesión, mostrar los enlaces de "Crear Usuario" e "Inicio Sesión"
                         echo '
                             <td class="tdDatos">
                                 <p class="sobreNos"><a class="enlacePaginaActual" href="./crearUsuario.php">Crear Usuario</a></p>
@@ -61,7 +59,6 @@
         <div class="item container-fluid mt-4">
             <div class="row">
                 <?php
-                    session_start();
                     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $idUsuario = $_POST['idUsuario'];
                         $host = "localhost";
@@ -73,24 +70,18 @@
                         if (!$conexion)
                             die("Error de conexión a la base de datos: " . mysqli_connect_error());
 
-                        // Validar y escapar datos para prevenir inyecciones SQL
                         $idUsuario = mysqli_real_escape_string($conexion, $idUsuario);
                         $totalGeneral = $_POST['totalGeneral'];
-                        // Insertar en la tabla 'compran'
                         $queryCompran = "INSERT INTO compran (idUsuario, total) VALUES ('$idUsuario', '$totalGeneral')";
                         $resultadoCompran = mysqli_query($conexion, $queryCompran);
 
                         if ($resultadoCompran) {
-                            // Obtener el ID generado automáticamente para la compra
                             $idPed = mysqli_insert_id($conexion);
-                            // Inicializar el total del pedido
                             $totalPedido = 0;
-                            // Iterar sobre los elementos del carrito
                             foreach ($_SESSION['carrito'] as $item) {
                                 $idJuego = $item['id_Juego'];
                                 $cantStock = $item['cantidad'];
                             
-                                // Obtener el precio del juego desde la base de datos
                                 $queryPrecio = "SELECT precio FROM juegos WHERE idJuego = '$idJuego'";
                                 $resultadoPrecio = mysqli_query($conexion, $queryPrecio);
                             
@@ -121,9 +112,8 @@
                             $queryActualizarTotal = "UPDATE compran SET total = '$totalPedido' WHERE idPed = '$idPed'";
                             $resultadoActualizarTotal = mysqli_query($conexion, $queryActualizarTotal);
 
-                            if (!$resultadoActualizarTotal) {
+                            if (!$resultadoActualizarTotal)
                                 die("Error al actualizar el total del pedido: " . mysqli_error($conexion));
-                            }
 
                             echo '<p>Compra realizada con éxito.</p>';
                             unset($_SESSION['carrito']);

@@ -16,7 +16,6 @@
                 background-color: #333;
                 color: #fff;
             }
-            /* Agregar más estilos específicos para el modo oscuro según sea necesario */
         </style>
     </head>
     <body>
@@ -51,80 +50,76 @@
                     window.location.href = "./alquiler.php";
             }
             function redirectPage2(value) {
-                if (value === "pedidos") {
+                if (value === "pedidos")
                     window.location.href = "./cliente.php";
-                } else if (value === "cerrarSesion") {
+                else if (value === "cerrarSesion") {
                     console.log("Cerrando sesión...");
                     logoutLink.style.display = "block";
                     cerrarSesion();
                 }  else if (value === "borrarUsuario") {
                     // Confirmar antes de borrar
                     var confirmar = confirm("¿Está seguro de que desea borrar su usuario? Esta acción no se puede deshacer.");
-                    if (confirmar) {
+                    if (confirmar)
                         window.location.href = "./borrarUsuario.php";
-                    }
                 }
             }
-            function cerrarSesion() {
+            function cerrarSesion()
                 window.location.href = './cerrarSesion.php';
-            }
         </script>
         <script>
             <?php if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) { ?>
-                // Si el usuario ha iniciado sesión
                 var logoutLink = document.getElementById('logoutLink');
 
                 logoutLink.addEventListener('click', function () {
-                    // Redirige a la página de cerrar sesión
                     window.location.href = './cerrarSesion.php';
                 });
             <?php } ?>
         </script>
         <div>
-        <?php
-            $db_hostname = "localhost";
-            $db_database = "tienda_videojuegos";
-            $db_username = "root";
-            $db_password = "";
-            $conexion = mysqli_connect($db_hostname, $db_username, $db_password, $db_database);
+            <?php
+                $db_hostname = "localhost";
+                $db_database = "tienda_videojuegos";
+                $db_username = "root";
+                $db_password = "";
+                $conexion = mysqli_connect($db_hostname, $db_username, $db_password, $db_database);
 
-            if ($conexion->connect_error) 
-                die("Conexión fallida: " . $conexion->connect_error);
+                if ($conexion->connect_error) 
+                    die("Conexión fallida: " . $conexion->connect_error);
 
-            $idUsuario = $_SESSION["usuario"];
+                $idUsuario = $_SESSION["usuario"];
 
-            $sqlBorrarDetallesPedido = "DELETE FROM detalle_pedido WHERE idPed IN (SELECT idPed FROM compran WHERE idUsuario = '$idUsuario')";
-            $stmt = $conexion->prepare($sqlBorrarDetallesPedido);
-            if ($stmt === false) 
-                die("Error al preparar la consulta para borrar detalles de pedido: " . $conexion->error);
+                $sqlBorrarDetallesPedido = "DELETE FROM detalle_pedido WHERE idPed IN (SELECT idPed FROM compran WHERE idUsuario = '$idUsuario')";
+                $stmt = $conexion->prepare($sqlBorrarDetallesPedido);
+                if ($stmt === false) 
+                    die("Error al preparar la consulta para borrar detalles de pedido: " . $conexion->error);
 
-            if (!$stmt->execute()) 
-                echo "Error al borrar detalles de pedidos del usuario: " . $stmt->error;
+                if (!$stmt->execute()) 
+                    echo "Error al borrar detalles de pedidos del usuario: " . $stmt->error;
 
-            $sqlBorrarCompras = "DELETE FROM compran WHERE idUsuario = ?";
-            $stmt = $conexion->prepare($sqlBorrarCompras);
-            if ($stmt === false) 
-                die("Error al preparar la consulta para borrar compras: " . $conexion->error);
+                $sqlBorrarCompras = "DELETE FROM compran WHERE idUsuario = ?";
+                $stmt = $conexion->prepare($sqlBorrarCompras);
+                if ($stmt === false) 
+                    die("Error al preparar la consulta para borrar compras: " . $conexion->error);
 
-            $stmt->bind_param("s", $idUsuario);
+                $stmt->bind_param("s", $idUsuario);
 
-            if (!$stmt->execute()) 
-                echo "Error al borrar compras del usuario: " . $stmt->error;
+                if (!$stmt->execute()) 
+                    echo "Error al borrar compras del usuario: " . $stmt->error;
 
-            $sqlBorrarUsuario = "DELETE FROM usuarios WHERE idUsuario = ?";
-            $stmt = $conexion->prepare($sqlBorrarUsuario);
-            if ($stmt === false)
-                die("Error al preparar la consulta para borrar usuario: " . $conexion->error);
+                $sqlBorrarUsuario = "DELETE FROM usuarios WHERE idUsuario = ?";
+                $stmt = $conexion->prepare($sqlBorrarUsuario);
+                if ($stmt === false)
+                    die("Error al preparar la consulta para borrar usuario: " . $conexion->error);
 
-            $stmt->bind_param("s", $idUsuario);
-            if ($stmt->execute())
-                echo "Usuario, sus compras y detalles de pedidos borrados exitosamente.";
-            else
-                echo "Error al borrar el usuario: " . $stmt->error;
-            $stmt->close();
-            $conexion->close();
-            session_destroy();
-        ?>
+                $stmt->bind_param("s", $idUsuario);
+                if ($stmt->execute())
+                    echo "Usuario, sus compras y detalles de pedidos borrados exitosamente.";
+                else
+                    echo "Error al borrar el usuario: " . $stmt->error;
+                $stmt->close();
+                $conexion->close();
+                session_destroy();
+            ?>
         </div>
         <div class="row item mt-2">
             <div class="izq">
