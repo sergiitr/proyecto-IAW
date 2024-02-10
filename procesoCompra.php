@@ -79,34 +79,33 @@
                             $idPed = mysqli_insert_id($conexion);
                             $totalPedido = 0;
                             foreach ($_SESSION['carrito'] as $item) {
-                                $idJuego = $item['id_Juego'];
-                                $cantStock = $item['cantidad'];
-                            
+                                // Asumiendo que el primer elemento de cada ítem del carrito es el ID del juego
+                                $idJuego = $item[0];
+                                $cantStock = $item[1]; // La cantidad está en la segunda posición del array
+
                                 $queryPrecio = "SELECT precio FROM juegos WHERE idJuego = '$idJuego'";
                                 $resultadoPrecio = mysqli_query($conexion, $queryPrecio);
-                            
-                                if ($resultadoPrecio) {
-                                    if ($filaPrecio = mysqli_fetch_assoc($resultadoPrecio)) {
-                                        $precioJuego = $filaPrecio['precio'];
-                            
-                                        $totalPorJuego = $cantStock * $precioJuego; 
-                                        $totalPedido += $totalPorJuego;
-                            
-                                        $queryDetallesPedido = "INSERT INTO detalle_pedido (idPed, idJuego, cantidad) VALUES ('$idPed', '$idJuego', '$cantStock')";
-                                        $resultadoDetallesPedido = mysqli_query($conexion, $queryDetallesPedido);
-                            
-                                        if (!$resultadoDetallesPedido) 
-                                            die("Error al insertar detalle_pedido: " . mysqli_error($conexion));
-                                        
-                                        $queryActualizarStock = "UPDATE juegos SET stock = stock - '$cantStock' WHERE idJuego = '$idJuego'";
-                                        $resultadoActualizarStock = mysqli_query($conexion, $queryActualizarStock);
-                            
-                                        if (!$resultadoActualizarStock)
-                                            die("Error al actualizar el stock: " . mysqli_error($conexion));
-                                    } else 
-                                        die("No se encontró el juego en la base de datos. Nombre del juego: $idJuego");  
+
+                                if ($resultadoPrecio && mysqli_num_rows($resultadoPrecio) > 0) {
+                                    $filaPrecio = mysqli_fetch_assoc($resultadoPrecio);
+                                    $precioJuego = $filaPrecio['precio'];
+
+                                    $totalPorJuego = $cantStock * $precioJuego; 
+                                    $totalPedido += $totalPorJuego;
+
+                                    $queryDetallesPedido = "INSERT INTO detalle_pedido (idPed, idJuego, cantidad) VALUES ('$idPed', '$idJuego', '$cantStock')";
+                                    $resultadoDetallesPedido = mysqli_query($conexion, $queryDetallesPedido);
+
+                                    if (!$resultadoDetallesPedido) 
+                                        die("Error al insertar detalle_pedido: " . mysqli_error($conexion));
+                                    
+                                    $queryActualizarStock = "UPDATE juegos SET stock = stock - '$cantStock' WHERE idJuego = '$idJuego'";
+                                    $resultadoActualizarStock = mysqli_query($conexion, $queryActualizarStock);
+
+                                    if (!$resultadoActualizarStock)
+                                        die("Error al actualizar el stock: " . mysqli_error($conexion));
                                 } else 
-                                    die("Error al ejecutar la consulta para obtener el precio del juego: " . mysqli_error($conexion));
+                                    die("No se encontró el juego en la base de datos. Nombre del juego: $idJuego");
                             }
 
                             $queryActualizarTotal = "UPDATE compran SET total = '$totalPedido' WHERE idPed = '$idPed'";

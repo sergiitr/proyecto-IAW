@@ -70,9 +70,9 @@
                     window.location.href = "./alquiler.php";
             }
             function redirectPage2(value) {
-                if (value === "pedidos") {
+                if (value === "pedidos")
                     window.location.href = "./cliente.php";
-                } else if (value === "cerrarSesion") {
+                else if (value === "cerrarSesion") {
                     console.log("Cerrando sesión...");
                     logoutLink.style.display = "block";
                     cerrarSesion();
@@ -82,7 +82,6 @@
                         window.location.href = "./borrarUsuario.php";
                 }
             }
-
             function cerrarSesion() {
                 window.location.href = './cerrarSesion.php';
             }
@@ -99,6 +98,7 @@
             <div class="row">
                 <h1>Carrito de Alquiler</h1>
                 <h3>Solo se podra alquilar un juego en cada compra</h3>
+                
                 <?php
                     $hoy = new DateTime();
                     $hoyStr = $hoy->format("Y-m-d");
@@ -106,101 +106,125 @@
                     $nueva_fecha = clone $hoy;
                     $nueva_fecha->add(new DateInterval('P15D'));
                     $nueva_fechaStr = $nueva_fecha->format("Y-m-d");
-                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+                    if (!isset($_SESSION['alquiler']))
+                        $_SESSION['alquiler'] = [];
+
+                    $id_Usuario = isset($_SESSION["usuario"]) ? $_SESSION["usuario"] : "UsuarioDesconocido";
+
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'], $_POST['iddelJuego'], $_POST['plataforma'])) {
                         $host = "localhost";
                         $user = "root";
                         $pass = "";
                         $database = "tienda_videojuegos";
-                        
                         $conexion = mysqli_connect($host, $user, $pass, $database);
-                        
-                        if (!$conexion) 
+                        if (!$conexion)
                             die("Error de conexión a la base de datos: " . mysqli_connect_error());
-                        
+
                         $nombreJuego = mysqli_real_escape_string($conexion, $_POST['id']);
                         $query = "SELECT precio FROM juegos WHERE nombre = '$nombreJuego'";
-                        $resultado = mysqli_query($conexion, $query);
+                        $resultadoAlq = mysqli_query($conexion, $query);
 
-                        if ($resultado) {
-                            $fila = mysqli_fetch_assoc($resultado);
-                            $precio = $fila['precio'];
-                            mysqli_free_result($resultado);
-                        } else 
+                        if ($resultadoAlq && $filaAlq = mysqli_fetch_assoc($resultadoAlq)) {
+                            $precio = $filaAlq['precio'];
+                            mysqli_free_result($resultadoAlq);
+                        } else
                             die("Error en la consulta: " . mysqli_error($conexion));
-
                         mysqli_close($conexion);
-                        
-                        $_SESSION['carrito'][] = [
-                            'id_Juego' => $_POST['iddelJuego'],
-                            'id' => $nombreJuego,
-                            'plataforma' => $_POST['plataforma'],
-                        ];
+                        $_SESSION['alquiler'][] = array($_POST['iddelJuego'], $nombreJuego, $_POST['plataforma'], $precio, $hoyStr, $nueva_fechaStr);
                     }
-                    $id_Usuario = $_SESSION["usuario"];
-                    if (isset($_SESSION['carrito']) && count($_SESSION['carrito']) > 0) {
-                        $ultimaLinea = end($_SESSION['carrito']);
-                        $idJuegoUltimo = $ultimaLinea['id_Juego'];
 
-                        echo '<table class="table table-dark table-striped">';
-                        echo '  <tr align=center>
-                                    <th>idProd</th>
-                                    <th>Producto</th>
-                                    <th>Plataforma</th>
-                                    <th>Fecha inicio</th>
-                                    <th>Fecha entrega</th>
-                                </tr>';
-                        echo '<tr align=center>';
-                        echo '<td>' . $idJuegoUltimo. ' </td>';
-                        echo '<td>' . htmlspecialchars($ultimaLinea['id']) . '</td>';
-                        echo '<td>' . $ultimaLinea['plataforma'] . '</td>';
-                        echo '<td>' . $hoyStr  . '</td>';
-                        echo '<td>' . $nueva_fechaStr . '</td>';
-                        echo '</tr>';
-                        echo '</table>';
-                        
-                        echo '<form method="post" action="procesoAlquiler.php">
-                                <input type="hidden" name="idJuego" value="' . $idJuegoUltimo . '">
-                                <input type="hidden" name="idUsuario" value="' . $id_Usuario . '">
-                                <input type="hidden" name="f_inicio" value="' . $hoyStr . '">
-                                <input type="hidden" name="f_fin" value="' . $nueva_fechaStr . '">
-                                <div class="visa-card">
-                                    <div class="logoContainer">
-                                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="23" height="23" viewBox="0 0 48 48" class="svgLogo" >
-                                            <path fill="#ff9800" d="M32 10A14 14 0 1 0 32 38A14 14 0 1 0 32 10Z"></path>
-                                            <path fill="#d50000" d="M16 10A14 14 0 1 0 16 38A14 14 0 1 0 16 10Z"></path>
-                                            <path fill="#ff3d00" d="M18,24c0,4.755,2.376,8.95,6,11.48c3.624-2.53,6-6.725,6-11.48s-2.376-8.95-6-11.48 C20.376,15.05,18,19.245,18,24z"></path>
-                                        </svg>
-                                    </div>
-                                    <div class="number-container">
-                                        <label class="input-label" for="cardNumber">CARD NUMBER</label>
-                                        <input class="inputstyle" id="cardNumber" placeholder="XXXX XXXX XXXX XXXX" name="cardNumber" type="text" required />
-                                    </div>
-                                
-                                    <div class="name-date-cvv-container">
-                                        <div class="name-wrapper">
-                                            <label class="input-label" for="holderName">CARD HOLDER</label>
-                                            <input class="inputstyle" id="holderName" placeholder="NAME" type="text" required/>
+                    if (count($_SESSION['alquiler']) > 0) {
+                        $ultimaLinea = end($_SESSION['alquiler']);
+                        $idJuegoUltimo = $ultimaLinea[0];
+                        echo '  <table class="table table-dark table-striped">
+                                    <tr align=center>
+                                        <th>idProd</th>
+                                        <th>Producto</th>
+                                        <th>Plataforma</th>
+                                        <th>Fecha inicio</th>
+                                        <th>Fecha entrega</th>
+                                    </tr>
+                                    <tr align=center>
+                                        <td>' . htmlspecialchars($idJuegoUltimo) . ' </td>
+                                        <td>' . htmlspecialchars($ultimaLinea[1]) . '</td>
+                                        <td>' . htmlspecialchars($ultimaLinea[2]) . '</td>
+                                        <td>' . htmlspecialchars($hoyStr) . '</td>
+                                        <td>' . htmlspecialchars($nueva_fechaStr) . '</td>
+                                    </tr>
+                                </table>
+                                <form method="post" action="procesoAlquiler.php" onsubmit="return validarFecha()">
+                                    <input type="hidden" name="idJuego" value="' . $idJuegoUltimo . '">
+                                    <input type="hidden" name="idUsuario" value="' . $id_Usuario . '">
+                                    <input type="hidden" name="f_inicio" value="' . $hoyStr . '">
+                                    <input type="hidden" name="f_fin" value="' . $nueva_fechaStr . '">
+                                    <div class="visa-card">
+                                        <div class="logoContainer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="23" height="23" viewBox="0 0 48 48" class="svgLogo" >
+                                                <path fill="#ff9800" d="M32 10A14 14 0 1 0 32 38A14 14 0 1 0 32 10Z"></path>
+                                                <path fill="#d50000" d="M16 10A14 14 0 1 0 16 38A14 14 0 1 0 16 10Z"></path>
+                                                <path fill="#ff3d00" d="M18,24c0,4.755,2.376,8.95,6,11.48c3.624-2.53,6-6.725,6-11.48s-2.376-8.95-6-11.48 C20.376,15.05,18,19.245,18,24z"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="number-container">
+                                            <label class="input-label" for="cardNumber">CARD NUMBER</label>
+                                            <input class="inputstyle" id="cardNumber" placeholder="XXXX XXXX XXXX XXXX" name="cardNumber" type="text" required />
                                         </div>
                                     
-                                        <div class="expiry-wrapper">
-                                            <label class="input-label" for="expiry">VALID THRU</label>
-                                            <input class="inputstyle" id="expiry" placeholder="MM/YY" type="text" required/>
-                                        </div>
-                                        <div class="cvv-wrapper">
-                                            <label class="input-label" for="cvv">CVV</label>
-                                            <input class="inputstyle" placeholder="***" maxlength="3" id="cvv" type="password" required/>
+                                        <div class="name-date-cvv-container">
+                                            <div class="name-wrapper">
+                                                <label class="input-label" for="holderName">CARD HOLDER</label>
+                                                <input class="inputstyle" id="holderName" placeholder="NAME" type="text" required/>
+                                            </div>
+                                        
+                                            <div class="expiry-wrapper">
+                                                <label class="input-label" for="expiry">VALID THRU</label>
+                                                <input class="inputstyle" id="expiry" placeholder="MM/YY" type="text" required/>
+                                            </div>
+                                            <div class="cvv-wrapper">
+                                                <label class="input-label" for="cvv">CVV</label>
+                                                <input class="inputstyle" placeholder="***" maxlength="3" id="cvv" type="password" required/>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                        
-                                <input type="submit" class="btn btn-primary" value="Realizar Alquiler">
-                            </form>
-                            <form method="post" action="vaciarcarritoAlquiler.php">
-                                <input type="submit" class="btn btn-danger" value="Vaciar Carrito">
-                            </form>';
+                                    <input type="submit" class="btn btn-primary" value="Realizar Alquiler">
+                                </form>
+                                <form method="post" action="vaciarcarritoAlquiler.php">
+                                    <input type="submit" class="btn btn-danger" value="Vaciar Carrito">
+                                </form>';
                     } else
-                        echo '<p>El carrito está vacío.</p>';
+                        echo '<p>El carrito de alquiler está vacío.</p>';
                 ?>
+                <script>
+                    function validarFecha() {
+                        var inputFecha = document.getElementById('expiry').value;
+                        
+                        // Verificar que la entrada tenga el formato MM/YY usando una expresión regular
+                        var formatoValido = /^\d{2}\/\d{2}$/;
+                        
+                        if (!formatoValido.test(inputFecha)) {
+                            alert('Por favor, introduce la fecha en formato MM/YY.');
+                            return false;
+                        }
+
+                        // Obtener el mes y el año del input
+                        var partesFecha = inputFecha.split('/');
+                        var mes = parseInt(partesFecha[0], 10); // Convertir a número base 10
+                        var año = parseInt(partesFecha[1], 10);
+
+                        // Obtener el mes y el año actuales
+                        var fechaActual = new Date();
+                        var mesActual = fechaActual.getMonth() + 1; // getMonth() devuelve valores de 0 a 11, por lo que se agrega 1
+                        var añoActual = fechaActual.getFullYear() % 100; // Solo obtener los dos últimos dígitos del año
+
+                        // Validar que el año sea igual o mayor al actual, y que el mes esté en el rango válido
+                        if (año < añoActual || (año === añoActual && mes < mesActual)){
+                            alert('La fecha de la tarjeta no es válida. Debe ser igual o superior al mes y año actuales.');
+                            return false;
+                        }
+                        return true;
+                    }
+                </script>
             </div>
         </div>
         <footer>

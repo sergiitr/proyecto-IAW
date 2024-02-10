@@ -2,6 +2,20 @@
 body {
   overflow-x: hidden;
 }
+body::-webkit-scrollbar {
+  width: 12px;               /* width of the entire scrollbar */
+}
+
+body::-webkit-scrollbar-track {
+  background: black;        /* color of the tracking area */
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: white;    /* color of the scroll thumb */
+  border-radius: 20px;       /* roundness of the scroll thumb */
+  border: 3px solid black;  /* creates padding around scroll thumb */
+}
+
 #psup {
   /*background: linear-gradient(45deg, lightblue, lightgray, lightcyan);*/
   height: auto;
@@ -853,7 +867,7 @@ select {
   margin-left: 8%;
   margin-bottom: 2%;
   height: 500px;
-  background: lightgray;
+  background: rgba(212, 12, 12, 0.425) ;
   font-size: 25px;
   font-weight: bold;
   border-radius: 15px;
@@ -950,4 +964,14 @@ select {
   letter-spacing: 1.5px;
   color: #e2e2e2;
   width: 100%;
+}
+
+.paginas {
+  background-color: black;
+  color: white;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-around;
 }

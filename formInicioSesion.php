@@ -1,3 +1,13 @@
+<?php
+session_start(); // Asegúrate de que esta llamada esté al principio del archivo.
+$error_login = ''; // Inicializa la variable.
+
+// Verifica si hay un mensaje de error en la sesión.
+if (isset($_SESSION['error_login'])) {
+    $error_login = $_SESSION['error_login'];
+    unset($_SESSION['error_login']); // Limpia el error de la sesión para que no aparezca nuevamente después de refrescar.
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
     <head>
@@ -49,21 +59,21 @@
             </table>
         </div>
         <div class="item container-fluid mt-2">
-            <form action="loginInicioSesion.php" method="post">
-                <div class="form-container">
-                    <p class="title">Bienvenido de nuevo!</p>
-                    <form class="form">
-                        <input type="text" class="input" placeholder="Nick" name='usuario'>
-                        <input type="password" class="input" placeholder="Contraseña" name='contrasena'>
-
-                        <button class="form-btn">Log in</button>
-                    </form>
-                    <p class="sign-up-label">
-                        ¿No tienes cuenta?<span class="sign-up-link"><a href="./crearUsuario.php">Create Una</a></span>
-                    </p>
-                </div>
-            </form>
+            <div class="form-container">
+                <p class="title">Bienvenido de nuevo!</p>
+                <form action="loginInicioSesion.php" method="post" class="form">
+                    <input type="text" class="input" placeholder="Nick" name="usuario">
+                    <input type="password" class="input" placeholder="Contraseña" name="contrasena">
+                    <button type="submit" class="form-btn">Log in</button>
+                </form>
+                <p class="sign-up-label">
+                    ¿No tienes cuenta?<span class="sign-up-link"><a href="./crearUsuario.php">Crea Una</a></span>
+                </p>
+            </div>
         </div>
+        <?php if (!empty($error_login)): ?>
+            <script>alert('<?php echo $error_login; ?>');</script>
+        <?php endif; ?>
         <footer>
             <div class="row item mt-2">
                 <div class="izq">

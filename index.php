@@ -16,7 +16,6 @@
                 background-color: #333;
                 color: #fff;
             }
-            /* Agregar más estilos específicos para el modo oscuro según sea necesario */
         </style>
     </head>
     <body>
@@ -30,39 +29,39 @@
                         <p class="sobreNos"><a class="enlacePaginaActual" href="./nosotros.php">SOBRE NOSOTROS</a></p>
                     </td>
                     <?php
-                    if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) {
-                        // Si el usuario ha iniciado sesión, no mostrar los enlaces de "Crear Usuario" e "Inicio Sesión"
-                        echo '
-                            <td class="tdDatos">
-                                <select aria-label="Default select example" onchange="redirectPage(this.value)">
-                                    <option selected disabled>SELECCIONE CARRITO</option>
-                                    <option value="carrito">CARRITO VENTA</option>
-                                    <option value="alquiler">CARRITO ALQUILER</option>
-                                </select>
-                            </td>
-                            <td class="tdDatos">
-                                <div class="user-info">
-                                    <p class="username">¡Hola, ',$_SESSION["usuario"],'!</p>
-                                    <select aria-label="Default select example" onchange="redirectPage2(this.value)">
-                                        <option selected disabled>Seleccione una opción</option>
-                                        <option value="pedidos">Mis pedidos</option>
-                                        <option value="cerrarSesion">Cerrar sesión</option>
-                                        <option value="borrarUsuario">Borrar Usuario</option>
+                        if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) {
+                            // Si el usuario ha iniciado sesión, no mostrar los enlaces de "Crear Usuario" e "Inicio Sesión"
+                            echo '
+                                <td class="tdDatos">
+                                    <select aria-label="Default select example" onchange="redirectPage(this.value)">
+                                        <option selected disabled>SELECCIONE CARRITO</option>
+                                        <option value="carrito">CARRITO VENTA</option>
+                                        <option value="alquiler">CARRITO ALQUILER</option>
                                     </select>
-                                    <a id="logoutLink" class="logout-link" style="display: none;" onclick="cerrarSesion()">Cerrar sesión</a>
-                                </div>
-                            </td>
-                        ';
-                    } else {
-                        echo '
-                            <td class="tdDatos">
-                                <p class="sobreNos"><a class="enlacePaginaActual" href="./crearUsuario.php">Crear Usuario</a></p>
-                            </td>
-                            <td class="tdDatos">
-                                <p class="carrito"><a class="enlacesPaginas" href="./formInicioSesion.php">Inicio Sesion</a></p>
-                            </td>
-                        ';
-                    }
+                                </td>
+                                <td class="tdDatos">
+                                    <div class="user-info">
+                                        <p class="username">¡Hola, ',$_SESSION["usuario"],'!</p>
+                                        <select aria-label="Default select example" onchange="redirectPage2(this.value)">
+                                            <option selected disabled>Seleccione una opción</option>
+                                            <option value="pedidos">Mis pedidos</option>
+                                            <option value="cerrarSesion">Cerrar sesión</option>
+                                            <option value="borrarUsuario">Borrar Usuario</option>
+                                        </select>
+                                        <a id="logoutLink" class="logout-link" style="display: none;" onclick="cerrarSesion()">Cerrar sesión</a>
+                                    </div>
+                                </td>
+                            ';
+                        } else {
+                            echo '
+                                <td class="tdDatos">
+                                    <p class="sobreNos"><a class="enlacePaginaActual" href="./crearUsuario.php">Crear Usuario</a></p>
+                                </td>
+                                <td class="tdDatos">
+                                    <p class="carrito"><a class="enlacesPaginas" href="./formInicioSesion.php">Inicio Sesion</a></p>
+                                </td>
+                            ';
+                        }
                     ?>
                 </tr>
             </table>

@@ -107,77 +107,55 @@
                 $conn = new mysqli($host, $user, $pass, $database);
 
                 // Verificar la conexión
-                if ($conn->connect_error) {
+                if ($conn->connect_error)
                     die("La conexión falló: " . $conn->connect_error);
-                }
 
-                // Definir y crear el procedimiento almacenado si no existe
-                $crearProcedimiento = "
-                    CREATE PROCEDURE IF NOT EXISTS ObtenerPedidosCliente(IN _idUsuario VARCHAR(20))
-                    BEGIN
-                        SELECT compran.idPed, compran.total, juegos.nombre AS nombreJuego, detalle_pedido.cantidad
-                        FROM compran
-                        INNER JOIN detalle_pedido ON compran.idPed = detalle_pedido.idPed
-                        INNER JOIN juegos ON detalle_pedido.idJuego = juegos.idJuego
-                        WHERE compran.idUsuario = _idUsuario;
-                    END
-                ";
-
-                if (!$conn->multi_query($crearProcedimiento)) 
-                    echo "Error al crear el procedimiento almacenado: " . $conn->error;
-                
                 // Obtener el ID del usuario
                 $idUsuario = $_SESSION["usuario"];
 
-                // Preparar la llamada al procedimiento almacenado
-                if ($stmt = $conn->prepare("CALL ObtenerPedidosCliente(?)")) {
+                $resultadosPorPagina = 3;
+                $paginaActual = isset($_GET['pagina']) ? $_GET['pagina'] : 1;
+                $inicioConsulta = ($paginaActual - 1) * $resultadosPorPagina;
 
+                // Preparar la llamada al procedimiento almacenado con paginación
+                if ($stmt = $conn->prepare("CALL ObtenerPedidosCliente(?)")) {
                     // Vincular el parámetro idUsuario al procedimiento almacenado
                     $stmt->bind_param("s", $idUsuario);
-
                     // Ejecutar el procedimiento almacenado
                     $stmt->execute();
-
                     // Obtener el resultado
                     $result = $stmt->get_result();
-
                     // Procesar los resultados
                     if ($result->num_rows > 0) {
-                        $pedidosAgrupados = [];
+                        $pedidos = []; // Vector para almacenar los pedidos
                         while ($row = $result->fetch_assoc()) {
-                            $idPedido = $row['idPed'];
-                    
-                            if (!isset($pedidosAgrupados[$idPedido])) {
-                                $pedidosAgrupados[$idPedido] = [
-                                    'idPed' => $idPedido,
-                                    'total' => $row['total'],
-                                    'detalles' => [],
-                                ];
-                            }
-                            $pedidosAgrupados[$idPedido]['detalles'][] = [
-                                'nombreJuego' => $row['nombreJuego'],
-                                'cantidad' => $row['cantidad'],
-                            ];
+                            $pedido = []; // Vector para cada pedido
+                            $pedido['idPed'] = $row['idPed'];
+                            $pedido['total'] = $row['total'];
+                            $detalle = []; // Vector para cada detalle
+                            $detalle['nombreJuego'] = $row['nombreJuego'];
+                            $detalle['cantidad'] = $row['cantidad'];
+                            $pedido['detalles'] = $detalle;
+                            $pedidos[] = $pedido;
                         }
-                    
+                        
                         echo '<div class="item mt-2">';
-                        foreach ($pedidosAgrupados as $pedido) {
-                            echo '<div class="card5">';
-                                echo '<h1 align=center>Pedido ID: ' . $pedido['idPed'] . '</h1><hr>';
-                                foreach ($pedido['detalles'] as $detalle) {
-                                    echo '<p>Juego: ' . $detalle['nombreJuego'] . '</p>';
-                                    echo '<p>Cantidad: ' . $detalle['cantidad'] . '</p>';
-                                    echo '<hr>';
-                                }
-                                echo '<p>Total: €' . $pedido['total'] . '</p>';
-                                echo '<hr>';
-                            echo '</div>';
+                        foreach ($pedidos as $pedido) {
+                            echo '
+                            <div class="card5">
+                                <h1 align=center style="background-color: black; color:wheat; border-radius:15px 15px 0% 0%;">Pedido ID: ' . $pedido['idPed'] . '</h1>
+                                <p>Juego: ' . $pedido['detalles']['nombreJuego'] . '</p>
+                                <p>Cantidad: ' . $pedido['detalles']['cantidad'] . '</p>
+                                <p>Total: €' . $pedido['total'] . '</p>
+                            </div>';
                         }
                         echo '</div>';
-                    } else
+ 
+                    } else {
                         echo '<p>No hay pedidos para este cliente.</p>';
+                    }
                     $stmt->close();
-                } else
+                } else 
                     echo "Error al preparar la llamada al procedimiento almacenado: " . $conn->error;
                 $conn->close();
             ?>

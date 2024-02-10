@@ -103,7 +103,31 @@
                         echo "Error de conexion";
                 ?>
                 <?php
-                    $resultado = mysqli_query($conexion, "select idJuego, nombre, stock, imagen, precio, plataforma from juegos where plataforma='switch'");
+                    // Configuración para la paginación
+                    $resultadosPorPagina = 6;
+                    $paginaActual = isset($_GET['pagina']) ? $_GET['pagina'] : 1;
+                    $inicioConsulta = ($paginaActual - 1) * $resultadosPorPagina;
+
+                    // Consulta SQL con limitación para la paginación
+                    $consulta = "SELECT idJuego, nombre, stock, imagen, precio, plataforma FROM juegos WHERE plataforma='switch' LIMIT $inicioConsulta, $resultadosPorPagina";
+                    $resultado = mysqli_query($conexion, $consulta);
+
+                    // Consulta SQL para obtener el número total de juegos
+                    $consultaTotal = "SELECT COUNT(*) AS total FROM juegos WHERE plataforma='switch'";
+                    $resultadoTotal = mysqli_query($conexion, $consultaTotal);
+
+                    // Verificar si la consulta fue exitosa
+                    if ($resultadoTotal) {
+                        $filaTotal = mysqli_fetch_assoc($resultadoTotal);
+                        $totalJuegos = $filaTotal['total'];
+                        // Calcular el número total de páginas
+                        $totalPaginas = ceil($totalJuegos / $resultadosPorPagina);
+                    } else {
+                        // Manejar el caso de consulta fallida
+                        echo "Error al obtener el número total de juegos: " . mysqli_error($conexion);
+                    }
+
+                    // Código para mostrar los juegos obtenidos
                     $contador = 1;
                     while ($valores = mysqli_fetch_assoc($resultado)) {
                         $nombre = $valores['nombre'];
@@ -117,9 +141,9 @@
                             <div class="card2">
                                 <div class="card" id="' . htmlspecialchars($id) . '">
                                     <h2>', $nombre, '</h2>
-                                   <img src="data:image/jpg; base64,', base64_encode($imagen), '" height="70%" width="50%">
-                                </div>
-                        ';
+                                    <img src="data:image/jpg; base64,', base64_encode($imagen), '" height="70%" width="50%">
+                                </div>';
+
                         if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) {
                             echo '<div class="card3">
                                     <form action="carrito.php" method="post">
@@ -134,7 +158,6 @@
                                             </span>
                                             <p class="text">Añadir al <br>carrito</p>
                                         </button>
-                                        
                                     </form>
                                     <form action="alquiler.php" method="post">
                                         <input type="hidden" name="iddelJuego" value="',$idJuego,'">
@@ -159,6 +182,13 @@
                             </style>';
                         $contador++;
                     }
+
+                    // Botones de navegación entre páginas
+                    echo '<div class="pagination">';
+                    for ($i = 1; $i <= $totalPaginas; $i++) {
+                        echo '<a href="?pagina=' . $i . '"><button id="btnPagina' . $i . '" class="paginas">' . $i . '</button></a>';
+                    }
+                    echo '</div>';
                 ?>
             </div>
         </div>
