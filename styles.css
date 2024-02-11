@@ -5,7 +5,19 @@
 
 body {
   overflow-x: hidden;
+  width: 100%;
+  height: 100%;
+  background-color: #111111;
+  background-image: linear-gradient(
+    32deg,
+    rgba(8, 8, 8, 0.74) 30px,
+    transparent
+  );
+  background-size: 60px 60px;
+  background-position: -5px -5px;
+  color:white;
 }
+
 body::-webkit-scrollbar {
   width: 12px;               /* width of the entire scrollbar */
 }
@@ -21,7 +33,7 @@ body::-webkit-scrollbar-thumb {
 }
 
 #psup {
-  height: 55px;
+  height: 70px;
   display: grid;
   justify-content: center;
   align-items: center;
