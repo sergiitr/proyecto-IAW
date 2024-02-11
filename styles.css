@@ -1,4 +1,8 @@
 @import url('https://fonts.googleapis.com/css?family=Pixelify+Sans');
+@import url('https://fonts.googleapis.com/css?family=Protest+Riot');
+@import url('https://fonts.googleapis.com/css?family=Honk');
+@import url('https://fonts.googleapis.com/css?family=Exo+2');
+
 body {
   overflow-x: hidden;
 }
@@ -17,16 +21,16 @@ body::-webkit-scrollbar-thumb {
 }
 
 #psup {
-  /*background: linear-gradient(45deg, lightblue, lightgray, lightcyan);*/
-  height: auto;
+  height: 55px;
   display: grid;
   justify-content: center;
   align-items: center;
   align-content: stretch;
   font-family:"Pixelify Sans";
-  background-image: url("./imagenes/videojuegos-video.gif");
+  background-image: url("./imagenes/fondo.webp");
   background-position:center;
 }
+
 .tdDatos {
   padding-left: 5%;
 }
@@ -536,6 +540,7 @@ body::-webkit-scrollbar-thumb {
   border-radius: 15px;
   cursor: pointer;
 }
+
 .card2 {
   width: 22%;
   margin-left: 8%;
@@ -549,6 +554,7 @@ body::-webkit-scrollbar-thumb {
   border-radius: 15px;
   cursor: pointer;
 }
+
 .card3 {
   display: flex;
   height: 100px;
@@ -599,7 +605,9 @@ body::-webkit-scrollbar-thumb {
   background-color: red;
   justify-content: flex-end;
 }
+
 .izq {
+  font-family: "Protest Riot";
   display: flex;
   height: 100px;
   width: 50%;
@@ -897,6 +905,7 @@ select {
   position: relative;
   gap: 15px;
 }
+
 .logoContainer {
   width: 100%;
   display: flex;
@@ -908,13 +917,16 @@ select {
   left: 0;
   padding: 18px;
 }
+
 .svgLogo {
   height: 40px;
   width: auto;
 }
+
 .inputstyle::placeholder {
   color: #ffffff;
 }
+
 .inputstyle {
   background-color: transparent;
   border: none;
@@ -925,40 +937,48 @@ select {
   height: 25px;
   letter-spacing: 1.5px;
 }
+
 .number-container {
   width: 100%;
   height: fit-content;
   display: flex;
   flex-direction: column;
 }
+
 #cardNumber {
   width: 100%;
   height: 25px;
 }
+
 .name-date-cvv-container {
   width: 100%;
   height: 25px;
   display: flex;
   gap: 10px;
 }
+
 .name-wrapper {
   width: 60%;
   height: fit-content;
   display: flex;
   flex-direction: column;
 }
+
 .expiry-wrapper, .cvv-wrapper {
   width: 30%;
   height: fit-content;
   display: flex;
   flex-direction: column;
 }
+
 .cvv-wrapper {
   width: 10%;
 }
+
 #expiry,#cvv {
   width: 100%;
 }
+
 .input-label {
   font-size: 8px;
   letter-spacing: 1.5px;
@@ -974,4 +994,20 @@ select {
 .pagination {
   display: flex;
   justify-content: space-around;
+}
+
+.snos1,.snos2 {
+  font-family: "Honk";
+}
+
+.snos1 {
+  font-size: 66px;
+}
+
+.snos2 {
+  font-size: 50px;
+}
+
+.descripcionEmpresa {
+  font-family: "Exo 2";
 }

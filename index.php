@@ -116,25 +116,25 @@
                 <div class="carousel-item active" data-bs-interval="10000">
                     <img src="./imagenes/ps5.png" class="d-block w-100" class="imagenesConsolas">
                     <div class="carousel-caption d-block">
-                        <h5 class="catalogos"><a href="./ps5.php">Catalogo PS5</a></h5>
+                        <h5 class="catalogos"><a class="catalogos" href="./ps5.php">Catalogo PS5</a></h5>
                     </div>
                 </div>
                 <div class="carousel-item" data-bs-interval="2000">
                     <img src="./imagenes/xbox.png" class="d-block w-100" class="imagenesConsolas">
                     <div class="carousel-caption d-block">
-                        <h5 class="catalogos"><a href="./xbox.php">Catalogo XBOX One</a></h5>
+                        <h5 class="catalogos"><a class="catalogos" href="./xbox.php">Catalogo XBOX One</a></h5>
                     </div>
                 </div>
                 <div class="carousel-item">
                     <img src="./imagenes/switch.png" class="d-block w-100" class="imagenesConsolas">
                     <div class="carousel-caption d-block">
-                        <h5 class="catalogos"><a href="./switch.php">Catalogo Nintendo Switch</a></h5>
+                        <h5 class="catalogos"><a class="catalogos" href="./switch.php">Catalogo Nintendo Switch</a></h5>
                     </div>
                 </div>
                 <div class="carousel-item">
                     <img src="./imagenes/pc.png" class="d-block w-100" class="imagenesConsolas">
                     <div class="carousel-caption d-block">
-                        <h5 class="catalogos"><a href="./pc.php">Catalogo PC</a></h5>
+                        <h5 class="catalogos"><a class="catalogos" href="./pc.php">Catalogo PC</a></h5>
                     </div>
                 </div>
             </div>

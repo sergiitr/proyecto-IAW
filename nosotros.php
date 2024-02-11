@@ -102,8 +102,8 @@
             <div class="container" id="container2">
                 <div class="row">
                     <div class="col-12 col-md-6">
-                        <h1><b>SOBRE NOSOTROS</b></h1>
-                        <h2><b>JUEGOS DE PRIMERAS MARCAS</b></h2>
+                        <h1 class="snos1"><b>SOBRE NOSOTROS</b></h1>
+                        <h2 class="snos2"><b>JUEGOS DE PRIMERAS MARCAS</b></h2>
                         <p class="descripcionEmpresa">
                             ¡Bienvenidos a nuestra tienda de videojuegos en Úbeda, donde la pasión por los juegos cobra vida! Desde nuestra fundación en diciembre de 2023, nos hemos esforzado por ofrecer la experiencia de juego definitiva para todos los gamers de la región.
                             <br>

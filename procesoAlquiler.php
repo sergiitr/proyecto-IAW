@@ -85,24 +85,33 @@
                             die("Error al realizar el alquiler: " . mysqli_error($conexion));
                         unset($_SESSION['carrito']);
 
-                        // Asegurarse de que el procedimiento almacenado exista sin intentar crearlo cada vez
+                        // Generar nombres únicos para el procedimiento y el evento
+                        $uniqueName = "DevolverJuego_" . $idJuego . "_" . $idUsuario . "_" . time();
+
+                        // Crear el procedimiento almacenado de manera dinámica si no existe
                         $procedimientoSQL = "
-                            CREATE PROCEDURE IF NOT EXISTS DevolverJuegoProcedure(IN juegoID INT, IN usuarioID INT)
+                            DROP PROCEDURE IF EXISTS `$uniqueName`;
+                            CREATE PROCEDURE `$uniqueName`(IN juegoID INT, IN usuarioID INT)
                             BEGIN
                                 UPDATE juegos SET stock = stock + 1 WHERE idJuego = juegoID;
+                                DROP EVENT IF EXISTS `evt_$uniqueName`;
+                                DROP PROCEDURE IF EXISTS `$uniqueName`;
                             END;
                         ";
 
-                        if (!mysqli_query($conexion, $procedimientoSQL))
+                        if (!mysqli_multi_query($conexion, $procedimientoSQL))
                             die("Error al verificar/crear el procedimiento almacenado: " . mysqli_error($conexion));
+                        
+                        // Esperar a que los comandos anteriores finalicen
+                        while (mysqli_next_result($conexion)) {;}
 
-                        // Crear el evento de devolución solo si no existe, de otra manera, actualizarlo.
-                        $eventoDevolucion = "CREATE EVENT IF NOT EXISTS devolver_juego
-                                            ON SCHEDULE AT '$f_fin'
-                                            DO
-                                            BEGIN
-                                                CALL DevolverJuegoProcedure('$idJuego', '$idUsuario');
-                                            END";
+                        // Crear el evento de devolución único para este alquiler
+                        $eventoDevolucion = "
+                            CREATE EVENT `evt_$uniqueName` ON SCHEDULE AT '$f_fin' DO
+                            BEGIN
+                                CALL `$uniqueName`('$idJuego', '$idUsuario');
+                            END;
+                        ";
 
                         $resultadoEvento = mysqli_query($conexion, $eventoDevolucion);
 
@@ -113,7 +122,6 @@
                         mysqli_close($conexion);
                     }
                 ?>
-
                 <a href="./index.php"><button class="ejemplo">
                     <span class="span-mother">
                         <span>V</span>

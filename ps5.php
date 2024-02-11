@@ -99,13 +99,45 @@
         </script>
         <div class="item container-fluid mt-4">
             <div class="row">
-                <?php require_once "login.php";
+                <?php require_once "login.php";        
                     $conexion=mysqli_connect($host,$user,$pass,$database);
                     mysqli_select_db($conexion,$database);
-                    if (!$conexion)
-                        echo "Error de conexion";
-                ?>
-                <?php
+                    if (!$conexion) 
+                        die("Error de conexión: " . mysqli_connect_error());
+
+                    
+                    // Crear la función si no existe
+                    $sqlCrearFuncion = "
+                        DROP FUNCTION IF EXISTS ContarVideojuegosPorPlataforma;
+                    ";
+                    if (!mysqli_query($conexion, $sqlCrearFuncion))
+                        echo "Error al eliminar la función si existe: " . mysqli_error($conexion);
+                    
+                    $sqlCrearFuncion = "
+                        CREATE FUNCTION ContarVideojuegosPorPlataforma(plataformaJuego VARCHAR(50)) 
+                        RETURNS INT
+                        DETERMINISTIC
+                        BEGIN
+                            DECLARE totalJuegos INT;
+                            SELECT COUNT(*) INTO totalJuegos FROM juegos WHERE plataforma = plataformaJuego;
+                            RETURN totalJuegos;
+                        END;
+                    ";
+                    if (!mysqli_query($conexion, $sqlCrearFuncion))
+                        echo "Error al crear la función: " . mysqli_error($conexion);
+                    else {
+                        // Llamada a la función almacenada
+                        $queryFuncion = "SELECT ContarVideojuegosPorPlataforma('ps5') AS totalJuegos";
+                        $resultadoFuncion = mysqli_query($conexion, $queryFuncion);
+                    
+                        // Verifica si la consulta fue exitosa
+                        if ($resultadoFuncion) {
+                            $filaFuncion = mysqli_fetch_assoc($resultadoFuncion);
+                            $totalJuegosPlataforma = $filaFuncion['totalJuegos'];
+                            echo "<h3>Hay $totalJuegosPlataforma juegos de ps5</h3>";
+                        } else
+                            echo "Error al llamar a la función: " . mysqli_error($conexion);
+                    }
                     // Configuración para la paginación
                     $resultadosPorPagina = 6;
                     $paginaActual = isset($_GET['pagina']) ? $_GET['pagina'] : 1;
@@ -125,10 +157,8 @@
                         $totalJuegos = $filaTotal['total'];
                         // Calcular el número total de páginas
                         $totalPaginas = ceil($totalJuegos / $resultadosPorPagina);
-                    } else {
-                        // Manejar el caso de consulta fallida
+                    } else 
                         echo "Error al obtener el número total de juegos: " . mysqli_error($conexion);
-                    }
 
                     // Código para mostrar los juegos obtenidos
                     $contador = 1;

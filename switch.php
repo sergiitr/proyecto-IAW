@@ -67,9 +67,9 @@
                     window.location.href = "./alquiler.php";
             }
             function redirectPage2(value) {
-                if (value === "pedidos") {
+                if (value === "pedidos")
                     window.location.href = "./cliente.php";
-                } else if (value === "cerrarSesion") {
+                else if (value === "cerrarSesion") {
                     console.log("Cerrando sesión...");
                     logoutLink.style.display = "block";
                     cerrarSesion();
@@ -99,11 +99,42 @@
                 <?php require_once "login.php";
                     $conexion=mysqli_connect($host,$user,$pass,$database);
                     mysqli_select_db($conexion,$database);
-                    if (!$conexion)
-                        echo "Error de conexion";
-                ?>
-                <?php
-                    // Configuración para la paginación
+                    if (!$conexion) 
+                        die("Error de conexión: " . mysqli_connect_error());
+
+                    
+                    // Crear la función si no existe
+                    $sqlCrearFuncion = "
+                        DROP FUNCTION IF EXISTS ContarVideojuegosPorPlataforma;
+                    ";
+                    if (!mysqli_query($conexion, $sqlCrearFuncion))
+                        echo "Error al eliminar la función si existe: " . mysqli_error($conexion);
+                    
+                    $sqlCrearFuncion = "
+                        CREATE FUNCTION ContarVideojuegosPorPlataforma(plataformaJuego VARCHAR(50)) 
+                        RETURNS INT
+                        DETERMINISTIC
+                        BEGIN
+                            DECLARE totalJuegos INT;
+                            SELECT COUNT(*) INTO totalJuegos FROM juegos WHERE plataforma = plataformaJuego;
+                            RETURN totalJuegos;
+                        END;
+                    ";
+                    if (!mysqli_query($conexion, $sqlCrearFuncion))
+                        echo "Error al crear la función: " . mysqli_error($conexion);
+                    else {
+                        // Llamada a la función almacenada
+                        $queryFuncion = "SELECT ContarVideojuegosPorPlataforma('switch') AS totalJuegos";
+                        $resultadoFuncion = mysqli_query($conexion, $queryFuncion);
+                    
+                        // Verifica si la consulta fue exitosa
+                        if ($resultadoFuncion) {
+                            $filaFuncion = mysqli_fetch_assoc($resultadoFuncion);
+                            $totalJuegosPlataforma = $filaFuncion['totalJuegos'];
+                            echo "<h3>Hay $totalJuegosPlataforma juegos de switch</h3>";
+                        } else
+                            echo "Error al llamar a la función: " . mysqli_error($conexion);
+                    }
                     $resultadosPorPagina = 6;
                     $paginaActual = isset($_GET['pagina']) ? $_GET['pagina'] : 1;
                     $inicioConsulta = ($paginaActual - 1) * $resultadosPorPagina;
@@ -122,11 +153,9 @@
                         $totalJuegos = $filaTotal['total'];
                         // Calcular el número total de páginas
                         $totalPaginas = ceil($totalJuegos / $resultadosPorPagina);
-                    } else {
-                        // Manejar el caso de consulta fallida
+                    } else
                         echo "Error al obtener el número total de juegos: " . mysqli_error($conexion);
-                    }
-
+                
                     // Código para mostrar los juegos obtenidos
                     $contador = 1;
                     while ($valores = mysqli_fetch_assoc($resultado)) {
@@ -185,9 +214,8 @@
 
                     // Botones de navegación entre páginas
                     echo '<div class="pagination">';
-                    for ($i = 1; $i <= $totalPaginas; $i++) {
+                    for ($i = 1; $i <= $totalPaginas; $i++) 
                         echo '<a href="?pagina=' . $i . '"><button id="btnPagina' . $i . '" class="paginas">' . $i . '</button></a>';
-                    }
                     echo '</div>';
                 ?>
             </div>
