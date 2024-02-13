@@ -13,7 +13,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     </head>
     <body>
-        <div id="psup" class="container-fluid mt-2">
+    <div id="psup" class="container-fluid mt-2">
             <table id="tablaSecciones">
                 <tr class="align-middle">
                     <td class="tdDatos">
@@ -23,43 +23,62 @@
                         <p class="sobreNos"><a class="enlacePaginaActual" href="./nosotros.php">SOBRE NOSOTROS</a></p>
                     </td>
                     <?php
-                    if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) {
-                        // Si el usuario ha iniciado sesión, no mostrar los enlaces de "Crear Usuario" e "Inicio Sesión"
-                        echo '
-                            <td class="tdDatos">
-                                <select aria-label="Default select example" onchange="redirectPage(this.value)">
-                                    <option selected disabled>SELECCIONE CARRITO</option>
-                                    <option value="carrito">CARRITO VENTA</option>
-                                    <option value="alquiler">CARRITO ALQUILER</option>
-                                </select>
-                            </td>
-                            <td class="tdDatos">
-                                <div class="user-info">
-                                    <p class="username">¡Hola, ',$_SESSION["usuario"],'!</p>
+                        if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) {
+                            // Verificar si el usuario no es root
+                            if ($_SESSION["usuario"] != "admin") {
+                                echo '
+                                    <td class="tdDatos">
+                                        <select aria-label="Default select example" onchange="redirectPage(this.value)">
+                                            <option selected disabled>SELECCIONE CARRITO</option>
+                                            <option value="carrito">CARRITO VENTA</option>
+                                            <option value="alquiler">CARRITO ALQUILER</option>
+                                        </select>
+                                    </td>
+                                ';
+                            }
+                            echo '
+                                <td class="tdDatos">
+                                    <div class="user-info">
+                                        <p class="username">¡Hola, ',$_SESSION["usuario"],'!</p>';
+                            // Verificar si el usuario es administrador
+                            if ($_SESSION["usuario"] == "admin") {
+                                echo '
+                                    <select aria-label="Default select example" onchange="redirectPage2(this.value)">
+                                        <option selected disabled>Seleccione una opción</option>
+                                        <option value="admin">Administrar</option>
+                                        <option value="cerrarSesion">Cerrar sesión</option>
+                                    </select>
+                                    <a id="logoutLink" class="logout-link" style="display: none;" onclick="cerrarSesion()">Cerrar sesión</a>';
+                                    
+                            } else {
+                                echo '
                                     <select aria-label="Default select example" onchange="redirectPage2(this.value)">
                                         <option selected disabled>Seleccione una opción</option>
                                         <option value="pedidos">Mis pedidos</option>
                                         <option value="cerrarSesion">Cerrar sesión</option>
                                         <option value="borrarUsuario">Borrar Usuario</option>
                                     </select>
-                                    <a id="logoutLink" class="logout-link" style="display: none;" onclick="cerrarSesion()">Cerrar sesión</a>
-                                </div>
-                            </td>
-                        ';
-                    } else {
-                        echo '
-                            <td class="tdDatos">
-                                <p class="sobreNos"><a class="enlacePaginaActual" href="./crearUsuario.php">Crear Usuario</a></p>
-                            </td>
-                            <td class="tdDatos">
-                                <p class="carrito"><a class="enlacesPaginas" href="./formInicioSesion.php">Inicio Sesion</a></p>
-                            </td>
-                        ';
-                    }
+                                    <a id="logoutLink" class="logout-link" style="display: none;" onclick="cerrarSesion()">Cerrar sesión</a>';
+                            }
+                            echo '
+                                    </div>
+                                </td>
+                            ';
+                        }else {
+                            echo '
+                                <td class="tdDatos">
+                                    <p class="sobreNos"><a class="enlacePaginaActual" href="./crearUsuario.php">Crear Usuario</a></p>
+                                </td>
+                                <td class="tdDatos">
+                                    <p class="carrito"><a class="enlacesPaginas" href="./formInicioSesion.php">Inicio Sesion</a></p>
+                                </td>
+                            ';
+                        }
                     ?>
                 </tr>
             </table>
         </div>
+
         <script>
             var logoutLink = document.getElementById("logout-link");
             function redirectPage(value) {
@@ -67,20 +86,23 @@
                     window.location.href = "./carrito.php";
                 else if (value === "alquiler")
                     window.location.href = "./alquiler.php";
+                
             }
             function redirectPage2(value) {
-                if (value === "pedidos")
+                if (value === "pedidos") {
                     window.location.href = "./cliente.php";
-                else if (value === "cerrarSesion") {
+                } else if (value === "cerrarSesion") {
                     console.log("Cerrando sesión...");
                     logoutLink.style.display = "block";
                     cerrarSesion();
                 }  else if (value === "borrarUsuario") {
                     // Confirmar antes de borrar
                     var confirmar = confirm("¿Está seguro de que desea borrar su usuario? Esta acción no se puede deshacer.");
-                    if (confirmar)
+                    if (confirmar) {
                         window.location.href = "./borrarUsuario.php";
-                }
+                    }
+                } else if (value == "admin")
+                    window.location.href = "./admin.php";
             }
 
             function cerrarSesion() {
