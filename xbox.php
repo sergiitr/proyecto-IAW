@@ -159,12 +159,10 @@
                             $filaFuncion = mysqli_fetch_assoc($resultadoFuncion);
                             $totalJuegosPlataforma = $filaFuncion['totalJuegos'];
                             echo "<h3>Hay $totalJuegosPlataforma juegos de Xbox</h3>";
-                        } else {
+                        } else
                             echo "Error al llamar a la función: " . mysqli_error($conexion);
-                        }
                     }
                     
-
                     // Configuración para la paginación
                     $resultadosPorPagina = 6;
                     $paginaActual = isset($_GET['pagina']) ? $_GET['pagina'] : 1;
@@ -203,7 +201,7 @@
                                     <img src="data:image/jpg; base64,', base64_encode($imagen), '" height="70%" width="50%">
                                 </div>';
 
-                        if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) {
+                        if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true  && $_SESSION["usuario"] != "admin") {
                             echo '<div class="card3">
                                     <form action="carrito.php" method="post">
                                         <input type="hidden" name="iddelJuego" value="',$idJuego,'">
@@ -230,6 +228,11 @@
                                             <p class="text">Alquilar</p>
                                         </button>
                                     </form>
+                                </div>';
+                        } elseif (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true && $_SESSION["usuario"] == "admin") {
+                            // Mostrar mensaje o botones inactivos para el administrador
+                            echo '<div class="card3">
+                                    <p>Botones inactivos para admin</p>
                                 </div>';
                         }
                         echo'    </div>';
