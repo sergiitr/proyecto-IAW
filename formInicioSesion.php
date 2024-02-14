@@ -1,12 +1,11 @@
 <?php
-session_start(); // Asegúrate de que esta llamada esté al principio del archivo.
-$error_login = ''; // Inicializa la variable.
+    session_start();
+    $error_login = '';
 
-// Verifica si hay un mensaje de error en la sesión.
-if (isset($_SESSION['error_login'])) {
-    $error_login = $_SESSION['error_login'];
-    unset($_SESSION['error_login']); // Limpia el error de la sesión para que no aparezca nuevamente después de refrescar.
-}
+    if (isset($_SESSION['error_login'])) {
+        $error_login = $_SESSION['error_login'];
+        unset($_SESSION['error_login']);
+    }
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -31,7 +30,6 @@ if (isset($_SESSION['error_login'])) {
                     </td>
                     <?php
                         if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) {
-                            // Si el usuario ha iniciado sesión, no mostrar los enlaces de "Crear Usuario" e "Inicio Sesión"
                             echo '
                                 <td class="tdDatos">
                                     <select aria-label="Default select example" onchange="redirectPage(this.value)">
@@ -45,7 +43,6 @@ if (isset($_SESSION['error_login'])) {
                                 </td>
                             ';
                         } else {
-                            // Si el usuario no ha iniciado sesión, mostrar los enlaces de "Crear Usuario" e "Inicio Sesión"
                             echo '
                                 <td class="tdDatos">
                                     <p class="sobreNos"><a class="enlacePaginaActual" href="./crearUsuario.php">Crear Usuario</a></p>
