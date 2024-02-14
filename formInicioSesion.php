@@ -17,6 +17,7 @@ if (isset($_SESSION['error_login'])) {
         <link rel="stylesheet" type="text/css" href="styles.css"/>
         <title>Proyecto</title>
         <link rel="shortcut icon" href="./imagenes/logo.jpeg"/>
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     </head>
     <body>
         <div id="psup" class="container-fluid mt-2">
@@ -29,31 +30,31 @@ if (isset($_SESSION['error_login'])) {
                         <p class="sobreNos"><a class="enlacePaginaActual" href="./nosotros.php">SOBRE NOSOTROS</a></p>
                     </td>
                     <?php
-                    if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) {
-                        // Si el usuario ha iniciado sesión, no mostrar los enlaces de "Crear Usuario" e "Inicio Sesión"
-                        echo '
-                            <td class="tdDatos">
-                                <select aria-label="Default select example" onchange="redirectPage(this.value)">
-                                    <option selected disabled>Seleccione una opción</option>
-                                    <option value="carrito">CARRITO VENTA</option>
-                                    <option value="alquiler">CARRITO ALQUILER</option>
-                                </select>
-                            </td>
-                            <td class="tdDatos">
-                                <p class="username">¡Hola, ' . $_SESSION["usuario"] . '!</p>
-                            </td>
-                        ';
-                    } else {
-                        // Si el usuario no ha iniciado sesión, mostrar los enlaces de "Crear Usuario" e "Inicio Sesión"
-                        echo '
-                            <td class="tdDatos">
-                                <p class="sobreNos"><a class="enlacePaginaActual" href="./crearUsuario.php">Crear Usuario</a></p>
-                            </td>
-                            <td class="tdDatos">
-                                <p class="carrito"><a class="enlacesPaginas" href="./formInicioSesion.php">Inicio Sesion</a></p>
-                            </td>
-                        ';
-                    }
+                        if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) {
+                            // Si el usuario ha iniciado sesión, no mostrar los enlaces de "Crear Usuario" e "Inicio Sesión"
+                            echo '
+                                <td class="tdDatos">
+                                    <select aria-label="Default select example" onchange="redirectPage(this.value)">
+                                        <option selected disabled>Seleccione una opción</option>
+                                        <option value="carrito">CARRITO VENTA</option>
+                                        <option value="alquiler">CARRITO ALQUILER</option>
+                                    </select>
+                                </td>
+                                <td class="tdDatos">
+                                    <p class="username">¡Hola, ' . $_SESSION["usuario"] . '!</p>
+                                </td>
+                            ';
+                        } else {
+                            // Si el usuario no ha iniciado sesión, mostrar los enlaces de "Crear Usuario" e "Inicio Sesión"
+                            echo '
+                                <td class="tdDatos">
+                                    <p class="sobreNos"><a class="enlacePaginaActual" href="./crearUsuario.php">Crear Usuario</a></p>
+                                </td>
+                                <td class="tdDatos">
+                                    <p class="carrito"><a class="enlacesPaginas" href="./formInicioSesion.php">Inicio Sesion</a></p>
+                                </td>
+                            ';
+                        }
                     ?>
                 </tr>
             </table>
@@ -61,9 +62,10 @@ if (isset($_SESSION['error_login'])) {
         <div class="item container-fluid mt-2">
             <div class="form-container">
                 <p class="title">Bienvenido de nuevo!</p>
-                <form action="loginInicioSesion.php" method="post" class="form">
+                <form action="loginInicioSesion.php" method="post" class="form" onsubmit="return validateForm()">
                     <input type="text" class="input" placeholder="Nick" name="usuario">
                     <input type="password" class="input" placeholder="Contraseña" name="contrasena">
+                    <div class="g-recaptcha" data-sitekey="6LdKTXIpAAAAALC6THSUnyPqgNeBjhdcjJiPTCsw"></div>
                     <button type="submit" class="form-btn">Log in</button>
                 </form>
                 <p class="sign-up-label">
@@ -71,6 +73,16 @@ if (isset($_SESSION['error_login'])) {
                 </p>
             </div>
         </div>
+        <script>
+            function validateForm() {
+                var response = grecaptcha.getResponse();
+                if (response.length == 0) {
+                    alert("Por favor, marque la casilla 'No soy un robot'");
+                    return false;
+                }
+                return true;
+            }
+        </script>
         <?php if (!empty($error_login)): ?>
             <script>alert('<?php echo $error_login; ?>');</script>
         <?php endif; ?>

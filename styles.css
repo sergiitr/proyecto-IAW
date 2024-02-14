@@ -7,12 +7,20 @@ body {
   overflow-x: hidden;
   width: 100%;
   height: 100%;
-  --color: rgba(0, 115, 19, 0.3);
-  background-color: #191a1a;
-  background-image: linear-gradient(180deg,transparent 24%,var(--color) 25%,var(--color) 26%,transparent 27%,transparent 74%,var(--color) 75%,var(--color) 76%,transparent 77%,transparent),
-                    linear-gradient(45deg,transparent 24%,var(--color) 35%,var(--color) 26%,transparent 17%,transparent 74%,var(--color) 75%,var(--color) 76%,transparent 77%,transparent);
-  background-size: 55px 55px;
-  color:white;
+  background: #000000;
+  --gap: 5em;
+  --line: 1px;
+  --color: rgba(255, 255, 255, 0.2);
+
+  background-image:
+    linear-gradient(
+      -90deg,transparent calc(var(--gap) - var(--line)), var(--color) calc(var(--gap) - var(--line) + 1px), var(--color) var(--gap)
+    ),
+    linear-gradient(
+      0deg, transparent calc(var(--gap) - var(--line)), var(--color) calc(var(--gap) - var(--line) + 1px), var(--color) var(--gap)
+    );
+  background-size: var(--gap) var(--gap);
+  color: white;
 }
 
 body::-webkit-scrollbar {
@@ -20,15 +28,14 @@ body::-webkit-scrollbar {
 }
 
 body::-webkit-scrollbar-track {
-  background: black;        /* color of the tracking area */
+  background: blue;        /* color of the tracking area */
 }
 
 body::-webkit-scrollbar-thumb {
   background-color: white;    /* color of the scroll thumb */
   border-radius: 20px;       /* roundness of the scroll thumb */
-  border: 3px solid black;  /* creates padding around scroll thumb */
+  border: 3px solid blue;  /* creates padding around scroll thumb */
 }
-
 #psup {
   height: 70px;
   display: grid;
@@ -39,32 +46,26 @@ body::-webkit-scrollbar-thumb {
   background-image: url("./imagenes/fondo.webp");
   background-position:center;
 }
-
 .tdDatos {
   padding-left: 5%;
 }
-
 .catalogos {
   margin-bottom: 30%;
   color:red;
 }
-
 .imagenesConsolas {
   height: 750px;
 }
-
 .master-container {
   display: grid;
   grid-template-columns: auto;
   gap: 5px;
 }
-
 .card {
   width: 400px;
   background: #FFFFFF;
   box-shadow: 0px 187px 75px rgba(0, 0, 0, 0.01), 0px 105px 63px rgba(0, 0, 0, 0.05), 0px 47px 47px rgba(0, 0, 0, 0.09), 0px 12px 26px rgba(0, 0, 0, 0.1), 0px 0px 0px rgba(0, 0, 0, 0.1);
 }
-
 .title {
   width: 100%;
   height: 40px;
@@ -77,23 +78,19 @@ body::-webkit-scrollbar-thumb {
   font-size: 11px;
   color: #63656b;
 }
-
 .cart {
   border-radius: 19px 19px 7px 7px;
 }
-
 .cart .products {
   display: flex;
   flex-direction: column;
   padding: 10px;
 }
-
 .cart .products .product {
   display: grid;
   grid-template-columns: 60px 1fr 80px 1fr;
   gap: 10px;
 }
-
 .cart .products .product span {
   font-size: 13px;
   font-weight: 600;
@@ -101,13 +98,11 @@ body::-webkit-scrollbar-thumb {
   margin-bottom: 8px;
   display: block;
 }
-
 .cart .products .product p {
   font-size: 11px;
   font-weight: 600;
   color: #7a7c81;
 }
-
 .cart .quantity {
   height: 30px;
   display: grid;
@@ -118,7 +113,6 @@ body::-webkit-scrollbar-thumb {
   border-radius: 7px;
   filter: drop-shadow(0px 1px 0px #efefef) drop-shadow(0px 1px 0.5px rgba(239, 239, 239, 0.5));
 }
-
 .cart .quantity label {
   width: 20px;
   height: 30px;
@@ -130,7 +124,6 @@ body::-webkit-scrollbar-thumb {
   font-weight: 700;
   color: #47484b;
 }
-
 .cart .quantity button {
   width: 30px;
   height: 30px;
@@ -142,27 +135,22 @@ body::-webkit-scrollbar-thumb {
   background-color: transparent;
   padding-bottom: 2px;
 }
-
 .card .small {
   font-size: 15px;
   margin: 0 0 auto auto;
 }
-
 .card .small sup {
   font-size: px;
 }
-
 .coupons {
   border-radius: 7px;
 }
-
 .coupons form {
   display: grid;
   grid-template-columns: 1fr 80px;
   gap: 10px;
   padding: 10px;
 }
-
 .input_field {
   width: auto;
   height: 36px;
@@ -173,13 +161,11 @@ body::-webkit-scrollbar-thumb {
   filter: drop-shadow(0px 1px 0px #efefef) drop-shadow(0px 1px 0.5px rgba(239, 239, 239, 0.5));
   transition: all 0.3s cubic-bezier(0.15, 0.83, 0.66, 1);
 }
-
 .input_field:focus {
   border: 1px solid transparent;
   box-shadow: 0px 0px 0px 2px #242424;
   background-color: transparent;
 }
-
 .coupons form button {
   display: flex;
   flex-direction: row;
@@ -199,37 +185,31 @@ body::-webkit-scrollbar-thumb {
   line-height: 15px;
   color: #ffffff;
 }
-
 .checkout {
   border-radius: 9px 9px 19px 19px;
 }
-
 .checkout .details {
   display: grid;
   grid-template-columns: 3fr 1fr;
   padding: 10px;
   gap: 5px;
 }
-
 .checkout .details span {
   font-size: 13px;
   font-weight: 600;
 }
-
 .checkout .details span:nth-child(odd) {
   font-size: 11px;
   font-weight: 700;
   color: #707175;
   margin: auto auto auto 0;
 }
-
 .checkout .details span:nth-child(even) {
   font-size: 13px;
   font-weight: 600;
   color: #47484b;
   margin: auto 0 auto auto;
 }
-
 .checkout .checkout--footer {
   display: flex;
   align-items: center;
@@ -237,18 +217,15 @@ body::-webkit-scrollbar-thumb {
   padding: 10px 10px 10px 20px;
   background-color: #efeff3;
 }
-
 .price {
   position: relative;
   font-size: 22px;
   color: #2B2B2F;
   font-weight: 900;
 }
-
 .price sup {
   font-size: 13px;
 }
-
 .price sub {
   width: fit-content;
   position: absolute;
@@ -257,7 +234,6 @@ body::-webkit-scrollbar-thumb {
   bottom: 5px;
   display: inline-block;
 }
-
 .checkout .checkout-btn {
   display: flex;
   flex-direction: row;
@@ -275,13 +251,11 @@ body::-webkit-scrollbar-thumb {
   font-weight: 600;
   transition: all 0.3s cubic-bezier(0.15, 0.83, 0.66, 1);
 }
-
 #colocacion {
   background-color: lightblue;
   width: 33%;
   display: inline-block;
 }
-
 .form {
   display: flex;
   flex-direction: column;
@@ -303,7 +277,6 @@ body::-webkit-scrollbar-thumb {
   align-items: center;
   padding-left: 30px;
 }
-
 .title::before,.title::after {
   position: absolute;
   content: "";
@@ -313,24 +286,20 @@ body::-webkit-scrollbar-thumb {
   left: 0px;
   background-color: royalblue;
 }
-
 .title::before {
   width: 18px;
   height: 18px;
   background-color: royalblue;
 }
-
 .title::after {
   width: 18px;
   height: 18px;
   animation: pulse 1s linear infinite;
 }
-
 .message, .signin {
   color: rgba(88, 87, 87, 0.822);
   font-size: 14px;
 }
-
 .signin {
   text-align: center;
 }
@@ -338,21 +307,17 @@ body::-webkit-scrollbar-thumb {
 .signin a {
   color: royalblue;
 }
-
 .signin a:hover {
   text-decoration: underline royalblue;
 }
-
 .flex {
   display: flex;
   width: 100%;
   gap: 6px;
 }
-
 .form label {
   position: relative;
 }
-
 .form label .input {
   width: 100%;
   padding: 10px 10px 20px 10px;
@@ -370,18 +335,15 @@ body::-webkit-scrollbar-thumb {
   cursor: text;
   transition: 0.3s ease;
 }
-
 .form label .input:placeholder-shown + span {
   top: 15px;
   font-size: 0.9em;
 }
-
 .form label .input:focus + span,.form label .input:valid + span {
   top: 30px;
   font-size: 0.7em;
   font-weight: 600;
 }
-
 .form label .input:valid + span {
   color: green;
 }
@@ -396,7 +358,6 @@ body::-webkit-scrollbar-thumb {
   font-size: 16px;
   transform: .3s ease;
 }
-
 .submit:hover {
   background-color: rgb(56, 90, 194);
 }
@@ -411,17 +372,15 @@ body::-webkit-scrollbar-thumb {
     opacity: 0;
   }
 }
-
 .form-container {
-  width: 100%;
-  height: auto;
+  width: 33%;
+  height: 450px;
   background-color: #fff;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   border-radius: 10px;
   box-sizing: border-box;
   padding: 20px 30px;
 }
-
 .title {
   text-align: center;
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
@@ -429,7 +388,6 @@ body::-webkit-scrollbar-thumb {
   font-size: 28px;
   font-weight: 800;
 }
-
 .form {
   width: 100%;
   display: flex;
@@ -437,7 +395,6 @@ body::-webkit-scrollbar-thumb {
   gap: 18px;
   margin-bottom: 15px;
 }
-
 .input {
   border-radius: 20px;
   border: 1px solid #c0c0c0;
@@ -445,7 +402,6 @@ body::-webkit-scrollbar-thumb {
   box-sizing: border-box;
   padding: 12px 15px;
 }
-
 .page-link {
   text-decoration: underline;
   margin: 0;
@@ -453,18 +409,15 @@ body::-webkit-scrollbar-thumb {
   color: #747474;
   text-decoration-color: #747474;
 }
-
 .page-link-label {
   cursor: pointer;
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
   font-size: 9px;
   font-weight: 700;
 }
-
 .page-link-label:hover {
   color: #000;
 }
-
 .form-btn {
   padding: 10px 15px;
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
@@ -476,18 +429,15 @@ body::-webkit-scrollbar-thumb {
   cursor: pointer;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
-
 .form-btn:active {
   box-shadow: none;
 }
-
 .sign-up-label {
   margin: 0;
   font-size: 10px;
   color: #747474;
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
-
 .sign-up-link {
   margin-left: 1px;
   font-size: 11px;
@@ -498,7 +448,6 @@ body::-webkit-scrollbar-thumb {
   font-weight: 800;
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande","Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
-
 .buttons-container {
   width: 100%;
   display: flex;
@@ -507,7 +456,6 @@ body::-webkit-scrollbar-thumb {
   margin-top: 20px;
   gap: 15px;
 }
-
 .apple-login-button, .google-login-button {
   border-radius: 20px;
   box-sizing: border-box;
@@ -521,22 +469,18 @@ body::-webkit-scrollbar-thumb {
   font-size: 11px;
   gap: 5px;
 }
-
 .apple-login-button {
   background-color: #000;
   color: #fff;
   border: 2px solid #000;
 }
-
 .google-login-button {
   border: 2px solid #747474;
 }
-
 .apple-icon, .google-icon {
   font-size: 18px;
   margin-bottom: 1px;
 }
-
 .card {
   width: 100%;
   height: 400px;
@@ -549,7 +493,6 @@ body::-webkit-scrollbar-thumb {
   border-radius: 15px;
   cursor: pointer;
 }
-
 .card2 {
   width: 22%;
   margin-left: 8%;
@@ -563,7 +506,6 @@ body::-webkit-scrollbar-thumb {
   border-radius: 15px;
   cursor: pointer;
 }
-
 .card3 {
   display: flex;
   height: 100px;
@@ -573,7 +515,6 @@ body::-webkit-scrollbar-thumb {
   align-items: flex-end;
   margin-top: 5%;
 }
-
 .card::before, .card::after {
   position: absolute;
   content: "";
@@ -587,26 +528,22 @@ body::-webkit-scrollbar-thumb {
   background-color: lightblue;
   transition: all 0.5s;
 }
-
 .card::before {
   top: 0;
   right: 0;
   border-radius: 0 15px 0 100%;
 }
-
 .card::after {
   bottom: 0;
   left: 0;
   border-radius: 0 100%  0 15px;
 }
-
 .card:hover::before, .card:hover:after {
   width: 100%;
   height: 100%;
   border-radius: 15px;
   transition: all 0.5s;
 }
-
 .der {
   display: flex;
   height: 100px;
@@ -614,7 +551,6 @@ body::-webkit-scrollbar-thumb {
   background-color: red;
   justify-content: flex-end;
 }
-
 .izq {
   font-family: "Protest Riot";
   display: flex;
@@ -626,13 +562,11 @@ body::-webkit-scrollbar-thumb {
   justify-content: space-around;
   color: white;
 }
-
 .carta {
   display: flex;
   height: 70px;
   width: 350px;
 }
-
 .carta svg {
   position: absolute;
   display: flex;
@@ -646,7 +580,6 @@ body::-webkit-scrollbar-thumb {
   padding: 0.25rem;
   cursor: pointer;
 }
-
 .carta .social-link1,.carta .social-link2,.carta .social-link3,.carta .social-link4,.carta .social-link5 {
   position: relative;
   display: flex;
@@ -659,11 +592,9 @@ body::-webkit-scrollbar-thumb {
   transition: 0.25s;
   border-radius: 50px;
 }
-
 .carta svg {
   transform: scale(1);
 }
-
 .carta .social-link1:hover {
   background: #f09433;
   background: -moz-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
@@ -672,22 +603,18 @@ body::-webkit-scrollbar-thumb {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f09433', endColorstr='#bc1888',GradientType=1 );
   animation: bounce_613 0.4s linear;
 }
-
 .carta .social-link2:hover {
   background-color: #242c34;
   animation: bounce_613 0.4s linear;
 }
-
 .carta .social-link3:hover {
   background-color: #5865f2;
   animation: bounce_613 0.4s linear;
 }
-
 .carta .social-link4:hover {
   background-color: #0a66c2;
   animation: bounce_613 0.4s linear;
 }
-
 .carta .social-link5:hover {
   background-color: #ff8000;
   animation: bounce_613 0.4s linear;
@@ -707,7 +634,6 @@ body::-webkit-scrollbar-thumb {
     transform: scale(1);
   }
 }
-
 .CartBtn {
   width: 140px;
   height: 40px;
@@ -723,7 +649,6 @@ body::-webkit-scrollbar-thumb {
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.103);
   position: relative;
 }
-
 .IconContainer {
   position: absolute;
   left: -50px;
@@ -738,11 +663,9 @@ body::-webkit-scrollbar-thumb {
   z-index: 2;
   transition-duration: .5s;
 }
-
 .icon {
   border-radius: 1px;
 }
-
 .text {
   height: 100%;
   width: fit-content;
@@ -756,18 +679,15 @@ body::-webkit-scrollbar-thumb {
   font-weight: 600;
   padding-top: 10%;
 }
-
 .CartBtn:hover .IconContainer {
   transform: translateX(58px);
   border-radius: 40px;
   transition-duration: .5s;
 }
-
 .CartBtn:hover .text {
   transform: translate(10px,0px);
   transition-duration: .5s;
 }
-
 .CartBtn:active {
   transform: scale(0.95);
   transition-duration: .5s;
@@ -784,7 +704,6 @@ select {
   background-color: transparent;
   color: blue;
 }
-
 .ejemplo {
   font-weight: bold;
   color: white;
@@ -798,87 +717,67 @@ select {
   justify-content: center;
   align-items: center;
 }
-
 .ejemplo .span-mother {
   display: flex;
   overflow: hidden;
 }
-
 .ejemplo:hover .span-mother {
   position: absolute;
 }
-
 .ejemplo:hover .span-mother span {
   transform: translateY(1.2em);
 }
-
 .ejemplo .span-mother span:nth-child(1) {
   transition: 0.2s;
 }
-
 .ejemplo .span-mother span:nth-child(2) {
   transition: 0.3s;
 }
-
 .ejemplo .span-mother span:nth-child(3) {
   transition: 0.4s;
 }
-
 .ejemplo .span-mother span:nth-child(4) {
   transition: 0.5s;
 }
-
 .ejemplo .span-mother span:nth-child(5) {
   transition: 0.6s;
 }
-
 .ejemplo .span-mother span:nth-child(6) {
   transition: 0.7s;
 }
-
 .ejemplo .span-mother2 {
   display: flex;
   position: absolute;
   overflow: hidden;
 }
-
 .ejemplo .span-mother2 span {
   transform: translateY(-1.2em);
 }
-
 .ejemplo:hover .span-mother2 span {
   transform: translateY(0);
 }
-
 .ejemplo .span-mother2 span {
   transition: 0.2s;
 }
-
 .ejemplo .span-mother2 span:nth-child(2) {
   transition: 0.3s;
 }
-
 .ejemplo .span-mother2 span:nth-child(3) {
   transition: 0.4s;
 }
-
 .ejemplo .span-mother2 span:nth-child(4) {
   transition: 0.5s;
 }
-
 .ejemplo .span-mother2 span:nth-child(5) {
   transition: 0.6s;
 }
-
 .ejemplo .span-mother2 span:nth-child(6) {
   transition: 0.7s;
 }
-
 .username {
   color: blue;
   margin-left: 5%;
 }
-
 .card5 {
   width: 22%;
   margin-left: 8%;
@@ -891,15 +790,12 @@ select {
   cursor: pointer;
   display: inline-table;
 }
-
 .logout-link {
   display: none;
 }
-
 .user-info:hover .logout-link {
   display: inline-block;
 }
-
 .visa-card {
   display: flex;
   flex-direction: column;
@@ -914,7 +810,6 @@ select {
   position: relative;
   gap: 15px;
 }
-
 .logoContainer {
   width: 100%;
   display: flex;
@@ -926,16 +821,13 @@ select {
   left: 0;
   padding: 18px;
 }
-
 .svgLogo {
   height: 40px;
   width: auto;
 }
-
 .inputstyle::placeholder {
   color: #ffffff;
 }
-
 .inputstyle {
   background-color: transparent;
   border: none;
@@ -946,77 +838,64 @@ select {
   height: 25px;
   letter-spacing: 1.5px;
 }
-
 .number-container {
   width: 100%;
   height: fit-content;
   display: flex;
   flex-direction: column;
 }
-
 #cardNumber {
   width: 100%;
   height: 25px;
 }
-
 .name-date-cvv-container {
   width: 100%;
   height: 25px;
   display: flex;
   gap: 10px;
 }
-
 .name-wrapper {
   width: 60%;
   height: fit-content;
   display: flex;
   flex-direction: column;
 }
-
 .expiry-wrapper, .cvv-wrapper {
   width: 30%;
   height: fit-content;
   display: flex;
   flex-direction: column;
 }
-
 .cvv-wrapper {
   width: 10%;
 }
-
 #expiry,#cvv {
   width: 100%;
 }
-
 .input-label {
   font-size: 8px;
   letter-spacing: 1.5px;
   color: #e2e2e2;
   width: 100%;
 }
-
 .paginas {
   background-color: black;
   color: white;
 }
-
 .pagination {
   display: flex;
   justify-content: space-around;
 }
-
 .snos1,.snos2 {
   font-family: "Honk";
+  color:green;
 }
-
 .snos1 {
   font-size: 66px;
 }
-
 .snos2 {
-  font-size: 50px;
+  font-size: 45px;
 }
-
 .descripcionEmpresa {
   font-family: "Exo 2";
 }
