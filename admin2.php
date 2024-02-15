@@ -1,6 +1,67 @@
 <?php
     session_start();
+    $host = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "tienda_videojuegos";
+    $conn = mysqli_connect($host, $username, $password, $dbname);
+
+    if (isset($_SESSION['usuario']) && $_SESSION['usuario'] == 'admin') {
+        if (!$conn) {
+            die("Conexión fallida: " . mysqli_connect_error());
+        }
+
+        function obtenerJuegos($conn, $plataforma) {
+            $sql = "SELECT idJuego, nombre, stock FROM juegos WHERE plataforma = ?";
+            $stmt = mysqli_prepare($conn, $sql);
+            if ($stmt) {
+                mysqli_stmt_bind_param($stmt, "s", $plataforma);
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
+                $juegos = [];
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $juegos[] = $row;
+                }
+                mysqli_stmt_close($stmt);
+                return $juegos;
+            } else {
+                echo "Error al preparar la consulta: " . mysqli_error($conn);
+                return [];
+            }
+        }
+
+        function actualizarStock($conn, $id, $nuevoStock) {
+            $sql = "UPDATE juegos SET stock = ? WHERE idJuego = ?";
+            $stmt = mysqli_prepare($conn, $sql);
+            if ($stmt) {
+                mysqli_stmt_bind_param($stmt, "ii", $nuevoStock, $id);
+                mysqli_stmt_execute($stmt);
+                mysqli_stmt_close($stmt);
+            } else {
+                echo "Error al actualizar el stock: " . mysqli_error($conn);
+            }
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['actualizar'])) {
+            $id = $_POST['idJuego'];
+            $nuevoStock = $_POST['nuevoStock'];
+            actualizarStock($conn, $id, $nuevoStock);
+            header('Location: admin2.php');
+            exit();
+        }
+
+        $plataformas = array('xbox', 'ps5', 'pc', 'switch');
+        $juegosPorPlataforma = array();
+        foreach ($plataformas as $plataforma) {
+            $juegosPorPlataforma[$plataforma] = obtenerJuegos($conn, $plataforma);
+        }
+    } else {
+        header('Location: index.php'); // Cambia 'index.php' por la página a la que quieres redirigir
+        exit(); // Asegúrate de que no se ejecute más código después de esta redirección
+    }
 ?>
+
+
 <!DOCTYPE html>
 <html lang="es">
     <head>
@@ -11,12 +72,17 @@
         <link rel="stylesheet" href="styles.css">
         <link rel="shortcut icon" href="./imagenes/logo.jpeg"/>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-        <style>
-            body.dark-mode {
-                background-color: #333;
-                color: #fff;
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script>
+            // Función para validar que el nuevo stock sea mayor al stock actual
+            function validarStockActual(idFormulario, stockActual) {
+                const formulario = document.getElementById(idFormulario);
+                const nuevoStock = formulario.querySelector('[name="nuevoStock"]').value;
+                if (nuevoStock <= stockActual)
+                    return false; // Prevenir el envío del formulario
+                return true; // Permitir el envío del formulario
             }
-        </style>
+        </script>
     </head>
     <body>
         <div id="psup" class="container-fluid mt-2">
@@ -46,7 +112,6 @@
                                 <td class="tdDatos">
                                     <div class="user-info">
                                         <p class="username">¡Hola, ',$_SESSION["usuario"],'!</p>';
-                            // Verificar si el usuario es administrador
                             if ($_SESSION["usuario"] == "admin") {
                                 echo '
                                     <select aria-label="Default select example" onchange="redirectPage2(this.value)">
@@ -129,47 +194,37 @@
                 });
             <?php } ?>
         </script>
-        <div id="carouselExampleDark" class="carousel carousel-dark slide h-10" data-bs-ride="carousel">
-            <div class="carousel-indicators">
-                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="3" aria-label="Slide 4"></button>
-            </div>
-            <div class="carousel-inner">
-                <div class="carousel-item active" data-bs-interval="10000">
-                    <img src="./imagenes/ps5.png" class="d-block w-100" class="imagenesConsolas">
-                    <div class="carousel-caption d-block">
-                        <h5 class="catalogos"><a class="catalogos" href="./ps5.php">Catalogo PS5</a></h5>
-                    </div>
-                </div>
-                <div class="carousel-item" data-bs-interval="2000">
-                    <img src="./imagenes/xbox.png" class="d-block w-100" class="imagenesConsolas">
-                    <div class="carousel-caption d-block">
-                        <h5 class="catalogos"><a class="catalogos" href="./xbox.php">Catalogo XBOX One</a></h5>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="./imagenes/switch.png" class="d-block w-100" class="imagenesConsolas">
-                    <div class="carousel-caption d-block">
-                        <h5 class="catalogos"><a class="catalogos" href="./switch.php">Catalogo Nintendo Switch</a></h5>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="./imagenes/pc.png" class="d-block w-100" class="imagenesConsolas">
-                    <div class="carousel-caption d-block">
-                        <h5 class="catalogos"><a class="catalogos" href="./pc.php">Catalogo PC</a></h5>
-                    </div>
-                </div>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Anterior</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Siguiente</span>
-            </button>
+        <div class="container">
+            <h1>Administración de Stock de Videojuegos</h1>
+            <?php foreach (array_keys($juegosPorPlataforma) as $plataforma): ?>
+            <h2><?php echo ucfirst($plataforma); ?></h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Stock</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($juegosPorPlataforma[$plataforma] as $juego): ?>
+                    <tr>
+                        <td><?php echo $juego['idJuego']; ?></td>
+                        <td><?php echo $juego['nombre']; ?></td>
+                        <td><?php echo $juego['stock']; ?></td>
+                        <td>
+                            <form method="post" id="form-<?php echo $juego['idJuego']; ?>" onsubmit="return validarStockActual('form-<?php echo $juego['idJuego']; ?>', <?php echo $juego['stock']; ?>);">
+                                <input type="hidden" name="idJuego" value="<?php echo $juego['idJuego']; ?>">
+                                <input type="number" name="nuevoStock" min="<?php echo $juego['stock'] + 1; ?>" value="<?php echo $juego['stock'] + 1; ?>" required>
+                                <button type="submit" name="actualizar" class="btn btn-primary">Actualizar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <?php endforeach; ?>
         </div>
         <div class="row item mt-2">
             <div class="izq">

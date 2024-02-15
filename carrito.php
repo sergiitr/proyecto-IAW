@@ -1,5 +1,9 @@
 <?php 
     session_start();
+    if (!isset($_SESSION["usuario"]) || $_SESSION["usuario"] == "admin") {
+        header('Location: index.php');
+        exit; // Asegúrate de que no hay salida antes de esta línea
+    }
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -14,7 +18,7 @@
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     </head>
     <body>
-    <div id="psup" class="container-fluid mt-2">
+        <div id="psup" class="container-fluid mt-2">
             <table id="tablaSecciones">
                 <tr class="align-middle">
                     <td class="tdDatos">
@@ -337,6 +341,6 @@
                     </a>
                 </div>
             </div>
-        </div>        
+        </div>
     </body>
 </html>

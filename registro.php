@@ -53,9 +53,10 @@
                 $db_username = "root";
                 $db_password = "";
                 $conexion = mysqli_connect($db_hostname, $db_username, $db_password, $db_database);
-                if ($conexion->connect_error)
-                    die("Conexión fallida: " . $conexion->connect_error);
-                
+                if (mysqli_connect_errno()) {
+                    die("Conexión fallida: " . mysqli_connect_error());
+                }
+
                 if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $usuario = $_POST["usuarios"];
                     $contrasena = $_POST["contrasenas"];
@@ -63,16 +64,19 @@
                     $direccion = $_POST["direccion"];
                     $nombre = $_POST["nombre"];
                     $contrasena_cifrada = password_hash($contrasena, PASSWORD_DEFAULT);
-                    $sql = "INSERT INTO usuarios VALUES ('$usuario', '$nombre', '$direccion', '$tlfn','$contrasena_cifrada')";
-                
-                    if ($conexion->query($sql) === TRUE) {
+                    $sql = "INSERT INTO usuarios (idusuario, nombre, direccion, telefono, contrasena) VALUES ('$usuario', '$nombre', '$direccion', '$tlfn', '$contrasena_cifrada')";
+
+                    if (mysqli_query($conexion, $sql)) {
                         echo "Usuario registrado correctamente";
                         header("Location: formInicioSesion.php");
-                    } else
-                        echo "Error al registrar el usuario: " . $conexion->error;
+                    } else {
+                        echo "Error al registrar el usuario: " . mysqli_error($conexion);
+                    }
                 }
-                $conexion->close();
+
+                mysqli_close($conexion);
             ?>
+
             <a href="./crearUsuario.php"><button class="ejemplo">
                 <span class="span-mother">
                     <span>V</span>

@@ -2,6 +2,8 @@
 @import url('https://fonts.googleapis.com/css?family=Protest+Riot');
 @import url('https://fonts.googleapis.com/css?family=Honk');
 @import url('https://fonts.googleapis.com/css?family=Exo+2');
+@import url('https://fonts.googleapis.com/css?family=Indie+Flower');
+@import url('https://fonts.googleapis.com/css?family=Amatic+SC');
 
 body {
   overflow-x: hidden;
@@ -48,6 +50,11 @@ body::-webkit-scrollbar-thumb {
 }
 .tdDatos {
   padding-left: 5%;
+}
+.letrasCantJuegos {
+  font-family: "Amatic SC";
+  text-align: center;
+  font-size: 45px;
 }
 .catalogos {
   margin-bottom: 30%;
@@ -494,6 +501,7 @@ body::-webkit-scrollbar-thumb {
   cursor: pointer;
 }
 .card2 {
+  font-family: 'Indie Flower';
   width: 22%;
   margin-left: 8%;
   margin-bottom: 3%;
@@ -782,7 +790,8 @@ select {
   width: 22%;
   margin-left: 8%;
   margin-bottom: 2%;
-  height: 500px;
+  height: auto;
+  min-height: 450px;
   background: rgba(212, 12, 12, 0.425) ;
   font-size: 25px;
   font-weight: bold;

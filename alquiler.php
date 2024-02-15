@@ -1,5 +1,9 @@
 <?php 
     session_start();
+    if (!isset($_SESSION["usuario"]) || $_SESSION["usuario"] == "admin") {
+        header('Location: index.php');
+        exit; // Asegúrate de que no hay salida antes de esta línea
+    }
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -14,7 +18,7 @@
         <link rel="stylesheet" href="styles.css">
     </head>
     <body>
-    <div id="psup" class="container-fluid mt-2">
+        <div id="psup" class="container-fluid mt-2">
             <table id="tablaSecciones">
                 <tr class="align-middle">
                     <td class="tdDatos">
@@ -90,9 +94,9 @@
                 
             }
             function redirectPage2(value) {
-                if (value === "pedidos") {
+                if (value === "pedidos")
                     window.location.href = "./cliente.php";
-                } else if (value === "cerrarSesion") {
+                else if (value === "cerrarSesion") {
                     console.log("Cerrando sesión...");
                     logoutLink.style.display = "block";
                     cerrarSesion();
@@ -116,7 +120,6 @@
                 var logoutLink = document.getElementById('logoutLink');
 
                 logoutLink.addEventListener('click', function () {
-                    // Redirige a la página de cerrar sesión
                     window.location.href = './cerrarSesion.php';
                 });
             <?php } ?>
@@ -127,12 +130,9 @@
                 <h3>Solo se podra alquilar un juego en cada compra</h3>
                 
                 <?php
-                    $hoy = new DateTime();
-                    $hoyStr = $hoy->format("Y-m-d");
-
-                    $nueva_fecha = clone $hoy;
-                    $nueva_fecha->add(new DateInterval('P15D'));
-                    $nueva_fechaStr = $nueva_fecha->format("Y-m-d");
+                    $hoy = date("Y-m-d");
+                    $nueva_fecha = strtotime('+15 days', strtotime($hoy));
+                    $nueva_fechaStr = date("Y-m-d", $nueva_fecha);
 
                     if (!isset($_SESSION['alquiler']))
                         $_SESSION['alquiler'] = [];

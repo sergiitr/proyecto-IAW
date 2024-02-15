@@ -45,7 +45,8 @@
                                 echo '
                                     <select aria-label="Default select example" onchange="redirectPage2(this.value)">
                                         <option selected disabled>Seleccione una opción</option>
-                                        <option value="admin">Administrar</option>
+                                        <option value="admin">Administrar Usuarios</option>
+                                        <option value="admin2">Administrar Stock</option>
                                         <option value="cerrarSesion">Cerrar sesión</option>
                                     </select>
                                     <a id="logoutLink" class="logout-link" style="display: none;" onclick="cerrarSesion()">Cerrar sesión</a>';
@@ -98,11 +99,12 @@
                 }  else if (value === "borrarUsuario") {
                     // Confirmar antes de borrar
                     var confirmar = confirm("¿Está seguro de que desea borrar su usuario? Esta acción no se puede deshacer.");
-                    if (confirmar) {
+                    if (confirmar)
                         window.location.href = "./borrarUsuario.php";
-                    }
                 } else if (value == "admin")
                     window.location.href = "./admin.php";
+                else if (value == "admin2")
+                    window.location.href = "./admin2.php";
             }
 
             function cerrarSesion() {

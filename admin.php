@@ -1,5 +1,9 @@
 <?php 
     session_start();
+    if (!isset($_SESSION["usuario"]) || $_SESSION["usuario"] !== "admin") {
+        header('Location: index.php');
+        exit;
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,7 +18,7 @@
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     </head>
     <body>
-    <div id="psup" class="container-fluid mt-2">
+        <div id="psup" class="container-fluid mt-2">
             <table id="tablaSecciones">
                 <tr class="align-middle">
                     <td class="tdDatos">
@@ -46,7 +50,8 @@
                                 echo '
                                     <select aria-label="Default select example" onchange="redirectPage2(this.value)">
                                         <option selected disabled>Seleccione una opción</option>
-                                        <option value="admin">Administrar</option>
+                                        <option value="admin">Administrar Usuarios</option>
+                                        <option value="admin2">Administrar Stock</option>
                                         <option value="cerrarSesion">Cerrar sesión</option>
                                     </select>
                                     <a id="logoutLink" class="logout-link" style="display: none;" onclick="cerrarSesion()">Cerrar sesión</a>';
@@ -104,6 +109,8 @@
                     }
                 } else if (value == "admin")
                     window.location.href = "./admin.php";
+                else if (value == "admin2")
+                    window.location.href = "./admin2.php";
             }
 
             function cerrarSesion() {
@@ -122,6 +129,7 @@
             <?php } ?>
         </script>
         <?php
+            
             require_once "login.php";
 
             $conexion = mysqli_connect($host, $user, $pass, $database);
@@ -130,10 +138,6 @@
             }
 
             // Verificar si el usuario es administrador
-            if (!isset($_SESSION["usuario"]) || $_SESSION["usuario"] !== "admin") {
-                echo "Acceso denegado.";
-                exit; // O redirigir al usuario a otra página.
-            }
 
             // Verificar si se envió el formulario de baja
             if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["usuarios_baja"])) {

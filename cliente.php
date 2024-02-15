@@ -1,5 +1,9 @@
 <?php 
     session_start();
+    if (!isset($_SESSION["usuario"]) || $_SESSION["usuario"] == "admin") {
+        header('Location: index.php');
+        exit;
+    }
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -14,7 +18,7 @@
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     </head>
     <body>
-    <div id="psup" class="container-fluid mt-2">
+        <div id="psup" class="container-fluid mt-2">
             <table id="tablaSecciones">
                 <tr class="align-middle">
                     <td class="tdDatos">
@@ -90,18 +94,16 @@
                 
             }
             function redirectPage2(value) {
-                if (value === "pedidos") {
+                if (value === "pedidos")
                     window.location.href = "./cliente.php";
-                } else if (value === "cerrarSesion") {
+                else if (value === "cerrarSesion") {
                     console.log("Cerrando sesión...");
                     logoutLink.style.display = "block";
                     cerrarSesion();
                 }  else if (value === "borrarUsuario") {
-                    // Confirmar antes de borrar
                     var confirmar = confirm("¿Está seguro de que desea borrar su usuario? Esta acción no se puede deshacer.");
-                    if (confirmar) {
+                    if (confirmar)
                         window.location.href = "./borrarUsuario.php";
-                    }
                 } else if (value == "admin")
                     window.location.href = "./admin.php";
             }
@@ -130,11 +132,12 @@
                 $pass = "";
                 $database = "tienda_videojuegos";
 
-                $conn = new mysqli($host, $user, $pass, $database);
+                $conn = mysqli_connect($host, $user, $pass, $database);
 
                 // Verificar la conexión
-                if ($conn->connect_error)
-                    die("La conexión falló: " . $conn->connect_error);
+                if (!$conn) {
+                    die("La conexión falló: " . mysqli_connect_error());
+                }
 
                 // Obtener el ID del usuario
                 $idUsuario = $_SESSION["usuario"];
@@ -143,49 +146,54 @@
                 $paginaActual = isset($_GET['pagina']) ? $_GET['pagina'] : 1;
                 $inicioConsulta = ($paginaActual - 1) * $resultadosPorPagina;
 
-                // Preparar la llamada al procedimiento almacenado con paginación
-                if ($stmt = $conn->prepare("CALL ObtenerPedidosCliente(?)")) {
-                    // Vincular el parámetro idUsuario al procedimiento almacenado
-                    $stmt->bind_param("s", $idUsuario);
-                    // Ejecutar el procedimiento almacenado
-                    $stmt->execute();
-                    // Obtener el resultado
-                    $result = $stmt->get_result();
-                    // Procesar los resultados
-                    if ($result->num_rows > 0) {
-                        $pedidos = []; // Vector para almacenar los pedidos
-                        while ($row = $result->fetch_assoc()) {
-                            $pedido = []; // Vector para cada pedido
-                            $pedido['idPed'] = $row['idPed'];
-                            $pedido['total'] = $row['total'];
-                            $detalle = []; // Vector para cada detalle
-                            $detalle['nombreJuego'] = $row['nombreJuego'];
-                            $detalle['cantidad'] = $row['cantidad'];
-                            $pedido['detalles'] = $detalle;
-                            $pedidos[] = $pedido;
+                // Obtener los pedidos del usuario
+                $stmt = mysqli_prepare($conn, "CALL ObtenerPedidosCliente(?)");
+                if ($stmt) {
+                    mysqli_stmt_bind_param($stmt, "s", $idUsuario);
+                    mysqli_stmt_execute($stmt);
+                    $result = mysqli_stmt_get_result($stmt);
+
+                    // Almacenar los pedidos agrupados por ID
+                    $pedidosAgrupados = array();
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        $idPedido = $row['idPed'];
+                        if (!isset($pedidosAgrupados[$idPedido])) {
+                            $pedidoArray = array('idPed', $idPedido, 'total', $row['total'], 'detalles', array());
+                            $pedidosAgrupados[$idPedido] = $pedidoArray;
                         }
-                        
-                        echo '<div class="item mt-2">';
-                        foreach ($pedidos as $pedido) {
-                            echo '
-                            <div class="card5">
-                                <h1 align=center style="background-color: black; color:wheat; border-radius:15px 15px 0% 0%;">Pedido ID: ' . $pedido['idPed'] . '</h1>
-                                <p>Juego: ' . $pedido['detalles']['nombreJuego'] . '</p>
-                                <p>Cantidad: ' . $pedido['detalles']['cantidad'] . '</p>
-                                <p>Total: €' . $pedido['total'] . '</p>
-                            </div>';
-                        }
-                        echo '</div>';
- 
-                    } else {
-                        echo '<p>No hay pedidos para este cliente.</p>';
+
+                        // Agregar detalles del juego al pedido
+                        $detalle = array('nombreJuego', $row['nombreJuego'], 'cantidad', $row['cantidad']);
+                        array_push($pedidosAgrupados[$idPedido][5], $detalle);
                     }
-                    $stmt->close();
-                } else 
-                    echo "Error al preparar la llamada al procedimiento almacenado: " . $conn->error;
-                $conn->close();
+
+                    // Mostrar los pedidos agrupados
+                    foreach ($pedidosAgrupados as $pedido) {
+                        echo '
+                        <div class="card5">
+                            <h1 align=center style="background-color: black; color:wheat; border-radius:15px 15px 0% 0%;">Pedido ID: ' . $pedido[1] . '</h1>';
+                        foreach ($pedido[5] as $detalle) {
+                            echo '
+                            <p>Juego: ' . $detalle[1] . '</p>
+                            <p>Cantidad: ' . $detalle[3] . '</p>
+                            <hr>';
+                        }
+                        echo '<p>Total: €' . $pedido[3] . '</p>
+                        </div>';
+                    }
+
+                    mysqli_stmt_close($stmt);
+                } else {
+                    echo "Error al preparar la llamada al procedimiento almacenado: " . mysqli_error($conn);
+                }
+
+                // Cerrar la conexión
+                mysqli_close($conn);
             ?>
         </div>
+
+
+
         <footer>
             <div class="item mt-2">
                 <div class="row">

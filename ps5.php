@@ -43,7 +43,8 @@
                                 echo '
                                     <select aria-label="Default select example" onchange="redirectPage2(this.value)">
                                         <option selected disabled>Seleccione una opción</option>
-                                        <option value="admin">Administrar</option>
+                                        <option value="admin">Administrar Usuarios</option>
+                                        <option value="admin2">Administrar Stock</option>
                                         <option value="cerrarSesion">Cerrar sesión</option>
                                     </select>
                                     <a id="logoutLink" class="logout-link" style="display: none;" onclick="cerrarSesion()">Cerrar sesión</a>';
@@ -101,6 +102,8 @@
                     }
                 } else if (value == "admin")
                     window.location.href = "./admin.php";
+                else if (value == "admin2")
+                    window.location.href = "./admin2.php";
             }
 
             function cerrarSesion() {
@@ -156,7 +159,7 @@
                         if ($resultadoFuncion) {
                             $filaFuncion = mysqli_fetch_assoc($resultadoFuncion);
                             $totalJuegosPlataforma = $filaFuncion['totalJuegos'];
-                            echo "<h3>Hay $totalJuegosPlataforma juegos de ps5</h3>";
+                            echo "<h3 class='letrasCantJuegos'>Hay $totalJuegosPlataforma juegos de ps5</h3>";
                         } else
                             echo "Error al llamar a la función: " . mysqli_error($conexion);
                     }

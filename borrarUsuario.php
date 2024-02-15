@@ -76,35 +76,39 @@
             <?php } ?>
         </script>
         <div>
-            <?php
-                $db_hostname = "localhost";
-                $db_database = "tienda_videojuegos";
-                $db_username = "root";
-                $db_password = "";
-                $conexion = mysqli_connect($db_hostname, $db_username, $db_password, $db_database);
+        <?php
+            $db_hostname = "localhost";
+            $db_database = "tienda_videojuegos";
+            $db_username = "root";
+            $db_password = "";
+            $conexion = mysqli_connect($db_hostname, $db_username, $db_password, $db_database);
 
-                if ($conexion->connect_error)
-                    die("Conexión fallida: " . $conexion->connect_error);
+            if (mysqli_connect_errno()) {
+                die("Conexión fallida: " . mysqli_connect_error());
+            }
 
-                $idUsuario = $_SESSION["usuario"];
+            $idUsuario = $_SESSION["usuario"];
 
-                // Se elimina la sesión antes de ejecutar el trigger
-                session_destroy();
+            // Se elimina la sesión antes de ejecutar el trigger
+            session_destroy();
 
-                // Se prepara y ejecuta la consulta para borrar el usuario en la base de datos
-                $sqlBorrarUsuario = "DELETE FROM usuarios WHERE idUsuario = ?";
-                $stmt = $conexion->prepare($sqlBorrarUsuario);
-                if ($stmt === false) 
-                    die("Error al preparar la consulta para borrar usuario: " . $conexion->error);
+            // Se prepara y ejecuta la consulta para borrar el usuario en la base de datos
+            $sqlBorrarUsuario = "DELETE FROM usuarios WHERE idUsuario = ?";
+            $stmt = mysqli_prepare($conexion, $sqlBorrarUsuario);
+            if ($stmt === false) {
+                die("Error al preparar la consulta para borrar usuario: " . mysqli_error($conexion));
+            }
 
-                $stmt->bind_param("s", $idUsuario);
-                if ($stmt->execute()) 
-                    echo "Usuario borrado exitosamente.";
-                else 
-                    echo "Error al borrar el usuario: " . $stmt->error;
-                $stmt->close();
-                $conexion->close();
-            ?>
+            mysqli_stmt_bind_param($stmt, "s", $idUsuario);
+            if (mysqli_stmt_execute($stmt)) {
+                echo "Usuario borrado exitosamente.";
+            } else {
+                echo "Error al borrar el usuario: " . mysqli_stmt_error($stmt);
+            }
+            mysqli_stmt_close($stmt);
+            mysqli_close($conexion);
+        ?>
+
         </div>
         <div class="row item mt-2">
             <div class="izq">

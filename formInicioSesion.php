@@ -2,6 +2,12 @@
     session_start();
     $error_login = '';
 
+    // Redirigir al usuario si ya ha iniciado sesión
+    if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] === true) {
+        header('Location: index.php'); // Puedes cambiar 'index.php' por la página a la que desees redirigir al usuario
+        exit;
+    }
+
     if (isset($_SESSION['error_login'])) {
         $error_login = $_SESSION['error_login'];
         unset($_SESSION['error_login']);
@@ -59,11 +65,11 @@
         <div class="item container-fluid mt-2">
             <div class="form-container">
                 <p class="title">Bienvenido de nuevo!</p>
-                <form action="loginInicioSesion.php" method="post" class="form" onsubmit="return validateForm()">
+                <form id="loginForm" action="loginInicioSesion.php" method="post" class="form" onsubmit="return validateForm()">
                     <input type="text" class="input" placeholder="Nick" name="usuario">
                     <input type="password" class="input" placeholder="Contraseña" name="contrasena">
-                    <div class="g-recaptcha" data-sitekey="6LdKTXIpAAAAALC6THSUnyPqgNeBjhdcjJiPTCsw"></div>
-                    <button type="submit" class="form-btn">Log in</button>
+                    <div class="g-recaptcha" data-sitekey="6LdKTXIpAAAAALC6THSUnyPqgNeBjhdcjJiPTCsw" data-callback="enableSubmit"></div>
+                    <button id="submitButton" type="submit" class="form-btn" disabled>Log in</button>
                 </form>
                 <p class="sign-up-label">
                     ¿No tienes cuenta?<span class="sign-up-link"><a href="./crearUsuario.php">Crea Una</a></span>
@@ -71,9 +77,13 @@
             </div>
         </div>
         <script>
+            var isVerified = false;
+            function enableSubmit() {
+                isVerified = true;
+                document.getElementById("submitButton").removeAttribute("disabled");
+            }
             function validateForm() {
-                var response = grecaptcha.getResponse();
-                if (response.length == 0) {
+                if (!isVerified) {
                     alert("Por favor, marque la casilla 'No soy un robot'");
                     return false;
                 }
@@ -81,8 +91,9 @@
             }
         </script>
         <?php if (!empty($error_login)): ?>
-            <script>alert('<?php echo $error_login; ?>');</script>
+            <script>showPopup('<?php echo $error_login; ?>');</script>
         <?php endif; ?>
+
         <footer>
             <div class="row item mt-2">
                 <div class="izq">
