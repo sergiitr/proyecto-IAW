@@ -6,60 +6,75 @@
     $dbname = "tienda_videojuegos";
     $conn = mysqli_connect($host, $username, $password, $dbname);
 
-    if (isset($_SESSION['usuario']) && $_SESSION['usuario'] == 'admin') {
-        if (!$conn) {
-            die("Conexión fallida: " . mysqli_connect_error());
-        }
+    if (!$conn)
+        die("Conexión fallida: " . mysqli_connect_error());
 
-        function obtenerJuegos($conn, $plataforma) {
-            $sql = "SELECT idJuego, nombre, stock FROM juegos WHERE plataforma = ?";
-            $stmt = mysqli_prepare($conn, $sql);
-            if ($stmt) {
-                mysqli_stmt_bind_param($stmt, "s", $plataforma);
-                mysqli_stmt_execute($stmt);
-                $result = mysqli_stmt_get_result($stmt);
-                $juegos = [];
-                while ($row = mysqli_fetch_assoc($result)) {
-                    $juegos[] = $row;
-                }
-                mysqli_stmt_close($stmt);
-                return $juegos;
-            } else {
-                echo "Error al preparar la consulta: " . mysqli_error($conn);
-                return [];
-            }
-        }
+    // Crear el procedimiento almacenado para actualizar el stock
+    $sqlCrearProcedimiento = "
+        DROP PROCEDURE IF EXISTS ActualizarStock;
+        CREATE PROCEDURE ActualizarStock(IN p_idJuego INT, IN p_nuevoStock INT)
+        BEGIN
+            UPDATE juegos SET stock = p_nuevoStock WHERE idJuego = p_idJuego;
+        END;
+    ";
 
-        function actualizarStock($conn, $id, $nuevoStock) {
-            $sql = "UPDATE juegos SET stock = ? WHERE idJuego = ?";
-            $stmt = mysqli_prepare($conn, $sql);
-            if ($stmt) {
-                mysqli_stmt_bind_param($stmt, "ii", $nuevoStock, $id);
-                mysqli_stmt_execute($stmt);
-                mysqli_stmt_close($stmt);
-            } else {
-                echo "Error al actualizar el stock: " . mysqli_error($conn);
-            }
-        }
+    if (mysqli_multi_query($conn, $sqlCrearProcedimiento)) {
+        echo "Procedimiento almacenado creado con éxito.";
+        do {
+            if ($result = mysqli_store_result($conn))
+                mysqli_free_result($result);
+        } while (mysqli_next_result($conn));
+    } else
+        echo "Error al crear el procedimiento almacenado: " . mysqli_error($conn);
 
-        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['actualizar'])) {
-            $id = $_POST['idJuego'];
-            $nuevoStock = $_POST['nuevoStock'];
-            actualizarStock($conn, $id, $nuevoStock);
-            header('Location: admin2.php');
-            exit();
+    function obtenerJuegos($conn, $plataforma) {
+        $sql = "SELECT idJuego, nombre, stock FROM juegos WHERE plataforma = ?";
+        $stmt = mysqli_prepare($conn, $sql);
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "s", $plataforma);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+            $juegos = [];
+            while ($row = mysqli_fetch_assoc($result))
+                $juegos[] = $row;
+            mysqli_stmt_close($stmt);
+            return $juegos;
+        } else {
+            echo "Error al preparar la consulta: " . mysqli_error($conn);
+            return [];
         }
+    }
 
+    function actualizarStock($conn, $id, $nuevoStock) {
+        $stmt = mysqli_prepare($conn, "CALL ActualizarStock(?, ?)");
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "ii", $id, $nuevoStock);
+            mysqli_stmt_execute($stmt);
+            mysqli_stmt_close($stmt);
+        } else
+            echo "Error al actualizar el stock: " . mysqli_error($conn);
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['actualizar'])) {
+        $id = $_POST['idJuego'];
+        $nuevoStock = $_POST['nuevoStock'];
+        actualizarStock($conn, $id, $nuevoStock);
+        header('Location: admin2.php');
+        exit();
+    }
+
+    if (isset($_SESSION['usuario']) && $_SESSION["administrador"] == 1) {
         $plataformas = array('xbox', 'ps5', 'pc', 'switch');
         $juegosPorPlataforma = array();
         foreach ($plataformas as $plataforma) {
             $juegosPorPlataforma[$plataforma] = obtenerJuegos($conn, $plataforma);
         }
     } else {
-        header('Location: index.php'); // Cambia 'index.php' por la página a la que quieres redirigir
-        exit(); // Asegúrate de que no se ejecute más código después de esta redirección
+        header('Location: index.php');
+        exit();
     }
 ?>
+
 
 
 <!DOCTYPE html>
@@ -97,7 +112,7 @@
                     <?php
                         if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) {
                             // Verificar si el usuario no es root
-                            if ($_SESSION["usuario"] != "admin") {
+                            if ($_SESSION["administrador"] != 1) {
                                 echo '
                                     <td class="tdDatos">
                                         <select aria-label="Default select example" onchange="redirectPage(this.value)">
@@ -112,7 +127,7 @@
                                 <td class="tdDatos">
                                     <div class="user-info">
                                         <p class="username">¡Hola, ',$_SESSION["usuario"],'!</p>';
-                            if ($_SESSION["usuario"] == "admin") {
+                            if ($_SESSION["administrador"] == 1) {
                                 echo '
                                     <select aria-label="Default select example" onchange="redirectPage2(this.value)">
                                         <option selected disabled>Seleccione una opción</option>
@@ -136,7 +151,7 @@
                                     </div>
                                 </td>
                             ';
-                        }else {
+                        } else {
                             echo '
                                 <td class="tdDatos">
                                     <p class="sobreNos"><a class="enlacePaginaActual" href="./crearUsuario.php">Crear Usuario</a></p>
@@ -161,18 +176,17 @@
                 
             }
             function redirectPage2(value) {
-                if (value === "pedidos") {
+                if (value === "pedidos")
                     window.location.href = "./cliente.php";
-                } else if (value === "cerrarSesion") {
+                else if (value === "cerrarSesion") {
                     console.log("Cerrando sesión...");
                     logoutLink.style.display = "block";
                     cerrarSesion();
                 }  else if (value === "borrarUsuario") {
                     // Confirmar antes de borrar
                     var confirmar = confirm("¿Está seguro de que desea borrar su usuario? Esta acción no se puede deshacer.");
-                    if (confirmar) {
+                    if (confirmar)
                         window.location.href = "./borrarUsuario.php";
-                    }
                 } else if (value == "admin")
                     window.location.href = "./admin.php";
                 else if (value == "admin2")

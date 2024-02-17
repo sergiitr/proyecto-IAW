@@ -64,14 +64,13 @@
                     $direccion = $_POST["direccion"];
                     $nombre = $_POST["nombre"];
                     $contrasena_cifrada = password_hash($contrasena, PASSWORD_DEFAULT);
-                    $sql = "INSERT INTO usuarios (idusuario, nombre, direccion, telefono, contrasena) VALUES ('$usuario', '$nombre', '$direccion', '$tlfn', '$contrasena_cifrada')";
+                    $sql = "INSERT INTO usuarios (idusuario, nombre, direccion, telefono, contrasena,administrador) VALUES ('$usuario', '$nombre', '$direccion', '$tlfn', '$contrasena_cifrada',0)";
 
                     if (mysqli_query($conexion, $sql)) {
                         echo "Usuario registrado correctamente";
                         header("Location: formInicioSesion.php");
-                    } else {
+                    } else
                         echo "Error al registrar el usuario: " . mysqli_error($conexion);
-                    }
                 }
 
                 mysqli_close($conexion);

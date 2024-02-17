@@ -1,6 +1,6 @@
 <?php 
     session_start();
-    if (!isset($_SESSION["usuario"]) || $_SESSION["usuario"] !== "admin") {
+    if (!isset($_SESSION["usuario"]) || $_SESSION["administrador"] !== 1) {
         header('Location: index.php');
         exit;
     }
@@ -30,7 +30,7 @@
                     <?php
                         if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) {
                             // Verificar si el usuario no es root
-                            if ($_SESSION["usuario"] != "admin") {
+                            if ($_SESSION["administrador"] != 1) {
                                 echo '
                                     <td class="tdDatos">
                                         <select aria-label="Default select example" onchange="redirectPage(this.value)">
@@ -46,7 +46,7 @@
                                     <div class="user-info">
                                         <p class="username">¡Hola, ',$_SESSION["usuario"],'!</p>';
                             // Verificar si el usuario es administrador
-                            if ($_SESSION["usuario"] == "admin") {
+                            if ($_SESSION["administrador"] == 1) {
                                 echo '
                                     <select aria-label="Default select example" onchange="redirectPage2(this.value)">
                                         <option selected disabled>Seleccione una opción</option>
@@ -95,18 +95,17 @@
                 
             }
             function redirectPage2(value) {
-                if (value === "pedidos") {
+                if (value === "pedidos")
                     window.location.href = "./cliente.php";
-                } else if (value === "cerrarSesion") {
+                else if (value === "cerrarSesion") {
                     console.log("Cerrando sesión...");
                     logoutLink.style.display = "block";
                     cerrarSesion();
                 }  else if (value === "borrarUsuario") {
                     // Confirmar antes de borrar
                     var confirmar = confirm("¿Está seguro de que desea borrar su usuario? Esta acción no se puede deshacer.");
-                    if (confirmar) {
+                    if (confirmar) 
                         window.location.href = "./borrarUsuario.php";
-                    }
                 } else if (value == "admin")
                     window.location.href = "./admin.php";
                 else if (value == "admin2")
@@ -129,22 +128,21 @@
             <?php } ?>
         </script>
         <?php
-            
             require_once "login.php";
-
             $conexion = mysqli_connect($host, $user, $pass, $database);
-            if (!$conexion) {
+            if (!$conexion)
                 die("Error de conexión: " . mysqli_connect_error());
-            }
-
-            // Verificar si el usuario es administrador
-
             // Verificar si se envió el formulario de baja
             if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["usuarios_baja"])) {
                 foreach ($_POST["usuarios_baja"] as $idUsuario) {
-                    // Asegúrate de no eliminar el usuario administrador por accidente
-                    if ($idUsuario == "admin")
-                        continue; // No eliminar el usuario administrador
+                    // Consulta para verificar si el usuario es administrador
+                    $consultaAdmin = "SELECT Administrador FROM usuarios WHERE idUsuario = '$idUsuario'";
+                    $resultadoAdmin = mysqli_query($conexion, $consultaAdmin);
+                    $filaAdmin = mysqli_fetch_assoc($resultadoAdmin);
+
+                    // Asegúrate de no eliminar usuarios administradores por accidente
+                    if ($filaAdmin['Administrador'] == 1)
+                        continue; // No eliminar el usuario si es administrador
                     
                     // Eliminar el usuario y sus registros relacionados
                     $queries = [
@@ -163,8 +161,7 @@
                 // Refrescar la página para mostrar el estado actualizado
                 header("Refresh:0");
             }
-
-            $query = "SELECT idUsuario, nombre FROM usuarios";
+            $query = "SELECT idUsuario, nombre, Administrador FROM usuarios";
             $resultado = mysqli_query($conexion, $query);
         ?>
         <div class="container mt-4">
@@ -182,7 +179,7 @@
                     <tbody>
                         <?php
                         while ($fila = mysqli_fetch_assoc($resultado)):
-                            $esAdmin = $fila["idUsuario"] === "admin"; // Verificar si el usuario es administrador
+                            $esAdmin = $fila["Administrador"] == 1; // Usa el campo 'Administrador' para determinar si el usuario es administrador
                         ?>
                             <tr>
                                 <td>

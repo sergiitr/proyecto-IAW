@@ -31,7 +31,7 @@
                     <?php
                         if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) {
                             // Verificar si el usuario no es root
-                            if ($_SESSION["usuario"] != "admin") {
+                            if ($_SESSION["administrador"] != "1") {
                                 echo '
                                     <td class="tdDatos">
                                         <select aria-label="Default select example" onchange="redirectPage(this.value)">
@@ -47,7 +47,7 @@
                                     <div class="user-info">
                                         <p class="username">¡Hola, ',$_SESSION["usuario"],'!</p>';
                             // Verificar si el usuario es administrador
-                            if ($_SESSION["usuario"] == "admin") {
+                            if ($_SESSION["administrador"] == "1") {
                                 echo '
                                     <select aria-label="Default select example" onchange="redirectPage2(this.value)">
                                         <option selected disabled>Seleccione una opción</option>
@@ -71,7 +71,7 @@
                                     </div>
                                 </td>
                             ';
-                        }else {
+                        } else {
                             echo '
                                 <td class="tdDatos">
                                     <p class="sobreNos"><a class="enlacePaginaActual" href="./crearUsuario.php">Crear Usuario</a></p>
@@ -96,18 +96,17 @@
                 
             }
             function redirectPage2(value) {
-                if (value === "pedidos") {
+                if (value === "pedidos")
                     window.location.href = "./cliente.php";
-                } else if (value === "cerrarSesion") {
+                else if (value === "cerrarSesion") {
                     console.log("Cerrando sesión...");
                     logoutLink.style.display = "block";
                     cerrarSesion();
                 }  else if (value === "borrarUsuario") {
                     // Confirmar antes de borrar
                     var confirmar = confirm("¿Está seguro de que desea borrar su usuario? Esta acción no se puede deshacer.");
-                    if (confirmar) {
+                    if (confirmar)
                         window.location.href = "./borrarUsuario.php";
-                    }
                 } else if (value == "admin")
                     window.location.href = "./admin.php";
                 else if (value == "admin2")

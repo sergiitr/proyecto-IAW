@@ -13,7 +13,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     </head>
     <body>
-    <div id="psup" class="container-fluid mt-2">
+        <div id="psup" class="container-fluid mt-2">
             <table id="tablaSecciones">
                 <tr class="align-middle">
                     <td class="tdDatos">
@@ -25,7 +25,7 @@
                     <?php
                         if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) {
                             // Verificar si el usuario no es root
-                            if ($_SESSION["usuario"] != "admin") {
+                            if ($_SESSION["administrador"] != 1) {
                                 echo '
                                     <td class="tdDatos">
                                         <select aria-label="Default select example" onchange="redirectPage(this.value)">
@@ -41,7 +41,7 @@
                                     <div class="user-info">
                                         <p class="username">¡Hola, ',$_SESSION["usuario"],'!</p>';
                             // Verificar si el usuario es administrador
-                            if ($_SESSION["usuario"] == "admin") {
+                            if ($_SESSION["administrador"] == 1) {
                                 echo '
                                     <select aria-label="Default select example" onchange="redirectPage2(this.value)">
                                         <option selected disabled>Seleccione una opción</option>
@@ -149,9 +149,9 @@
                             RETURN totalJuegos;
                         END;
                     ";
-                    if (!mysqli_query($conexion, $sqlCrearFuncion)) {
+                    if (!mysqli_query($conexion, $sqlCrearFuncion))
                         echo "Error al crear la función: " . mysqli_error($conexion);
-                    } else {
+                    else {
                         // Llamada a la función almacenada
                         $queryFuncion = "SELECT ContarVideojuegosPorPlataforma('xbox') AS totalJuegos";
                         $resultadoFuncion = mysqli_query($conexion, $queryFuncion);
@@ -203,7 +203,7 @@
                                     <img src="data:image/jpg; base64,', base64_encode($imagen), '" height="70%" width="50%">
                                 </div>';
 
-                        if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true  && $_SESSION["usuario"] != "admin") {
+                        if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true  && $_SESSION["administrador"] != 1) {
                             echo '<div class="card3">
                                     <form action="carrito.php" method="post">
                                         <input type="hidden" name="iddelJuego" value="',$idJuego,'">
@@ -231,7 +231,7 @@
                                         </button>
                                     </form>
                                 </div>';
-                        } elseif (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true && $_SESSION["usuario"] == "admin") {
+                        } elseif (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true && $_SESSION["administrador"] == 1) {
                             // Mostrar mensaje o botones inactivos para el administrador
                             echo '<div class="card3">
                                     <p>Botones inactivos para admin</p>

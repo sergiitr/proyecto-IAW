@@ -103,9 +103,8 @@
                 }  else if (value === "borrarUsuario") {
                     // Confirmar antes de borrar
                     var confirmar = confirm("¿Está seguro de que desea borrar su usuario? Esta acción no se puede deshacer.");
-                    if (confirmar) {
+                    if (confirmar)
                         window.location.href = "./borrarUsuario.php";
-                    }
                 } else if (value == "admin")
                     window.location.href = "./admin.php";
             }

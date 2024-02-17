@@ -23,7 +23,7 @@
                     <?php
                         if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) {
                             // Verificar si el usuario no es root
-                            if ($_SESSION["usuario"] != "admin") {
+                            if ($_SESSION["administrador"] != 1) {
                                 echo '
                                     <td class="tdDatos">
                                         <select aria-label="Default select example" onchange="redirectPage(this.value)">
