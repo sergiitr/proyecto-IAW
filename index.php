@@ -53,6 +53,7 @@
                                         <option selected disabled>Seleccione una opción</option>
                                         <option value="admin">Administrar Usuarios</option>
                                         <option value="admin2">Administrar Stock</option>
+                                        <option value="admin3">Añadir Videojuegos</option>
                                         <option value="cerrarSesion">Cerrar sesión</option>
                                     </select>
                                     <a id="logoutLink" class="logout-link" style="display: none;" onclick="cerrarSesion()">Cerrar sesión</a>';
@@ -111,6 +112,8 @@
                     window.location.href = "./admin.php";
                 else if (value == "admin2")
                     window.location.href = "./admin2.php";
+                else if (value == "admin3")
+                    window.location.href = "./admin3.php";
             }
 
             function cerrarSesion() {

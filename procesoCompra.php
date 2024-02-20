@@ -170,16 +170,15 @@
 
                             $queryActualizarTotal = "UPDATE compran SET total = '$totalPedido' WHERE idPed = '$idPed'";
                             $resultadoActualizarTotal = mysqli_query($conexion, $queryActualizarTotal);
-
                             if (!$resultadoActualizarTotal)
-                                die("Error al actualizar el total del pedido: " . mysqli_error($conexion));
-
+                                die("Error al actualizar el total del pedido: " . mysqli_error($conexion)); 
                             echo '<p>Compra realizada con éxito.</p>';
                             unset($_SESSION['carrito']);
                         } else
                             die("Error al insertar en compran: " . mysqli_error($conexion));
                         mysqli_close($conexion);
                     }
+                    
                 ?>
                 <a href="./index.php"><button class="ejemplo">
                     <span class="span-mother">

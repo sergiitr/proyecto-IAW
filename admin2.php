@@ -18,14 +18,6 @@
         END;
     ";
 
-    if (mysqli_multi_query($conn, $sqlCrearProcedimiento)) {
-        echo "Procedimiento almacenado creado con éxito.";
-        do {
-            if ($result = mysqli_store_result($conn))
-                mysqli_free_result($result);
-        } while (mysqli_next_result($conn));
-    } else
-        echo "Error al crear el procedimiento almacenado: " . mysqli_error($conn);
 
     function obtenerJuegos($conn, $plataforma) {
         $sql = "SELECT idJuego, nombre, stock FROM juegos WHERE plataforma = ?";
@@ -133,6 +125,7 @@
                                         <option selected disabled>Seleccione una opción</option>
                                         <option value="admin">Administrar Usuarios</option>
                                         <option value="admin2">Administrar Stock</option>
+                                        <option value="admin3">Añadir Videojuegos</option>
                                         <option value="cerrarSesion">Cerrar sesión</option>
                                     </select>
                                     <a id="logoutLink" class="logout-link" style="display: none;" onclick="cerrarSesion()">Cerrar sesión</a>';
@@ -173,7 +166,6 @@
                     window.location.href = "./carrito.php";
                 else if (value === "alquiler")
                     window.location.href = "./alquiler.php";
-                
             }
             function redirectPage2(value) {
                 if (value === "pedidos")
@@ -191,6 +183,8 @@
                     window.location.href = "./admin.php";
                 else if (value == "admin2")
                     window.location.href = "./admin2.php";
+                else if (value == "admin3")
+                    window.location.href = "./admin3.php";
             }
 
             function cerrarSesion() {
@@ -201,7 +195,6 @@
             <?php if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) { ?>
                 // Si el usuario ha iniciado sesión
                 var logoutLink = document.getElementById('logoutLink');
-
                 logoutLink.addEventListener('click', function () {
                     // Redirige a la página de cerrar sesión
                     window.location.href = './cerrarSesion.php';
