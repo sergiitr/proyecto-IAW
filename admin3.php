@@ -115,29 +115,29 @@
                 </select><br><br>
                 <label for="idcompania">Compañía:</label><br>
                 <select id="idcompania" name="idcompania">
-                    <!-- Aquí se cargarán las opciones de compañías desde la base de datos usando PHP -->
-                    <?php
-                        // Conexión a la base de datos
-                        require_once "login.php";
-                        $conexion = mysqli_connect($host, $user, $pass, $database);
-                        
-                        // Verificar la conexión
-                        if ($conexion->connect_error) {
-                            die("Error de conexión: " . $conexion->connect_error);
-                        }
+                <?php
+                    // Conexión a la base de datos
+                    require_once "login.php";
+                    $conexion = mysqli_connect($host, $user, $pass, $database);
 
-                        // Consultar las compañías desde la base de datos
-                        $consulta_companias = "SELECT idCompania, nombreCompania FROM compania";
-                        $resultado_companias = $conexion->query($consulta_companias);
+                    // Verificar la conexión
+                    if (mysqli_connect_error()) {
+                        die("Error de conexión: " . mysqli_connect_error());
+                    }
 
-                        // Mostrar las opciones en el select
-                        while ($fila = $resultado_companias->fetch_assoc()) {
-                            echo "<option value='" . $fila['idCompania'] . "'>" . $fila['nombreCompania'] . "</option>";
-                        }
+                    // Consultar las compañías desde la base de datos
+                    $consulta_companias = "SELECT idCompania, nombreCompania FROM compania";
+                    $resultado_companias = mysqli_query($conexion, $consulta_companias);
 
-                        // Cerrar la conexión
-                        $conexion->close();
-                    ?>
+                    // Mostrar las opciones en el select
+                    while ($fila = mysqli_fetch_assoc($resultado_companias)) {
+                        echo "<option value='" . $fila['idCompania'] . "'>" . $fila['nombreCompania'] . "</option>";
+                    }
+
+                    // Cerrar la conexión
+                    mysqli_close($conexion);
+                ?>
+
                 </select><br><br>
                 <label for="stock">Subir Imagen:</label><br>
                 <label class="custum-file-upload" for="imagen">
