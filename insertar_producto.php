@@ -17,19 +17,20 @@
         require_once "login.php";
         $conexion = mysqli_connect($host, $user, $pass, $database);
 
+        if (!$conexion) {
+            die("Error de conexión: " . mysqli_connect_error());
+        }
+
         // Leer el contenido de la imagen
         $imagen_contenido = addslashes(file_get_contents($imagen_ruta));
 
         // Insertar los datos en la base de datos
         $consulta = "INSERT INTO juegos (nombre, stock, imagen, precio, idcompania, plataforma) VALUES ('$nombre', $stock, '$imagen_contenido', '$precio', $idcompania, '$plataforma')";
-
-        if ($conexion->query($consulta) === TRUE) {
+        if (mysqli_query($conexion, $consulta))
             echo "Producto insertado correctamente.";
-        } else {
-            echo "Error al insertar el producto: " . $conexion->error;
-        }
-
+        else
+            echo "Error al insertar el producto: " . mysqli_error($conexion);
         // Cerrar la conexión
-        $conexion->close();
+        mysqli_close($conexion);
     }
 ?>
