@@ -701,12 +701,6 @@ body::-webkit-scrollbar-thumb {
   transition-duration: .5s;
 }
 
-footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-}
-
 select {
   border: 0px solid #fff;
   background-color: transparent;
@@ -910,9 +904,17 @@ select {
 }
 footer {
   margin-top: 10%;
-  position:static;
-  bottom: 0;
   width: 100%;
+}
+
+.sticky {
+  position: sticky;
+  bottom: 0;
+}
+
+.absolute {
+  position: absolute;
+  bottom: 0;
 }
 .custum-file-upload {
   height: 200px;

@@ -127,7 +127,8 @@
         <div class="item container-fluid mt-4">
             <div class="row">
                 <h1>Carrito de Compras</h1>
-                <?php 
+                <?php
+                    $footerClass = 'absolute';
                     $host = "localhost";
                     $user = "root";
                     $pass = "";
@@ -150,7 +151,9 @@
 
                     // Cerrar conexión
                     mysqli_close($conexion);
-
+                    if (isset($_SESSION['carrito']) && !empty($_SESSION['carrito'])) {
+                        $footerClass = 'sticky'; // Si hay elementos en el carrito, el footer se posiciona como 'sticky'
+                    }
                     // Función para agregar producto al carrito
                     function agregarProductoAlCarrito($conexion) {
                         if (isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] == true) {
@@ -170,15 +173,12 @@
                                     $producto = array($fila['idJuego'], $fila['nombre'], $nuevaCantidad, $plataforma, $fila['precio'], $nuevaCantidad * $fila['precio']);
                                     $_SESSION['carrito'][$idJuego] = $producto;
                                     echo "<p>Producto añadido al carrito correctamente.</p>";
-                                } else {
+                                } else
                                     echo "<p>No se pueden añadir más unidades de este producto debido a limitaciones de stock.</p>";
-                                }
-                            } else {
+                            } else
                                 echo "<p>Producto no encontrado.</p>";
-                            }
-                        } else {
+                        } else 
                             echo "<p>Debe iniciar sesión para agregar productos al carrito.</p>";
-                        }
                     }
 
                     // Función para calcular descuento por fidelidad
@@ -203,7 +203,7 @@
                     function mostrarCarrito($conexion, $descuento) {
                         $totalGeneral = 0;
                         if (isset($_SESSION['carrito']) && count($_SESSION['carrito']) > 0) {
-                            echo "<table class='table table-dark table-striped'>";
+                            echo "<table class='table table-dark table-striped' class='videojuegos'>";
                             echo "<tr>
                                     <th>Producto</th>
                                     <th>Cantidad</th>
@@ -303,10 +303,12 @@
                             return false;
                         }
                         return true;
+                        
                     }
                 </script>
             </div>
         </div>
+        <footer class="<?php echo $footerClass; ?>">
         <div class="row item mt-2">
             <div class="izq">
                 <h2>SERGIITR GAMES</h2>
@@ -341,5 +343,7 @@
                 </div>
             </div>
         </div>
+        </footer>
+        <script src="cambioFooter.js"></script>
     </body>
 </html>

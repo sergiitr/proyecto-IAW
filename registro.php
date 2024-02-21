@@ -64,7 +64,7 @@
                     $direccion = $_POST["direccion"];
                     $nombre = $_POST["nombre"];
                     $contrasena_cifrada = password_hash($contrasena, PASSWORD_DEFAULT);
-                    $sql = "INSERT INTO usuarios (idusuario, nombre, direccion, telefono, contrasena,administrador) VALUES ('$usuario', '$nombre', '$direccion', '$tlfn', '$contrasena_cifrada',0)";
+                    $sql = "INSERT INTO usuarios (idusuario, nombre, direccion, tlfn, contrasena,administrador) VALUES ('$usuario', '$nombre', '$direccion', '$tlfn', '$contrasena_cifrada',0)";
 
                     if (mysqli_query($conexion, $sql)) {
                         echo "Usuario registrado correctamente";
