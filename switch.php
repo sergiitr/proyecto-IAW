@@ -45,6 +45,8 @@
                                         <option selected disabled>Seleccione una opción</option>
                                         <option value="admin">Administrar Usuarios</option>
                                         <option value="admin2">Administrar Stock</option>
+                                        <option value="admin3">Añadir Videojuegos</option>
+                                        <option value="admin4">Copia de seguridad</option>
                                         <option value="cerrarSesion">Cerrar sesión</option>
                                     </select>
                                     <a id="logoutLink" class="logout-link" style="display: none;" onclick="cerrarSesion()">Cerrar sesión</a>';

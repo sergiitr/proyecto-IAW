@@ -24,6 +24,8 @@ function redirectPage2(value) {
         window.location.href = "./admin2.php";
     else if (value == "admin3")
         window.location.href = "./admin3.php";
+    else if (value == "admin4")
+        window.location.href = "./admin4.php";
 }
 
 function cerrarSesion() {
