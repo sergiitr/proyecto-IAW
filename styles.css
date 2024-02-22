@@ -958,3 +958,12 @@ footer {
 .custum-file-upload input {
   display: none;
 }
+
+.abajo {
+  position: absolute;
+  bottom: 0;
+}
+.cliente {
+  bottom: 0;
+  position:fixed;
+}

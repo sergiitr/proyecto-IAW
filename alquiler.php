@@ -129,7 +129,7 @@
                         } else
                             die("Error en la consulta: " . mysqli_error($conexion));
                         mysqli_close($conexion);
-                        $_SESSION['alquiler'][] = array($_POST['iddelJuego'], $nombreJuego, $_POST['plataforma'], $precio, $hoyStr, $nueva_fechaStr);
+                        $_SESSION['alquiler'][] = array($_POST['iddelJuego'], $nombreJuego, $_POST['plataforma'], $precio, $hoy, $nueva_fechaStr);
                     }
 
                     if (count($_SESSION['alquiler']) > 0) {
@@ -147,14 +147,14 @@
                                         <td>' . htmlspecialchars($idJuegoUltimo) . ' </td>
                                         <td>' . htmlspecialchars($ultimaLinea[1]) . '</td>
                                         <td>' . htmlspecialchars($ultimaLinea[2]) . '</td>
-                                        <td>' . htmlspecialchars($hoyStr) . '</td>
+                                        <td>' . htmlspecialchars($hoy) . '</td>
                                         <td>' . htmlspecialchars($nueva_fechaStr) . '</td>
                                     </tr>
                                 </table>
                                 <form method="post" action="procesoAlquiler.php" onsubmit="return validarFecha()">
                                     <input type="hidden" name="idJuego" value="' . $idJuegoUltimo . '">
                                     <input type="hidden" name="idUsuario" value="' . $id_Usuario . '">
-                                    <input type="hidden" name="f_inicio" value="' . $hoyStr . '">
+                                    <input type="hidden" name="f_inicio" value="' . $hoy . '">
                                     <input type="hidden" name="f_fin" value="' . $nueva_fechaStr . '">
                                     <div class="visa-card">
                                         <div class="logoContainer">
@@ -187,7 +187,7 @@
                                     </div>
                                     <input type="submit" class="btn btn-primary" value="Realizar Alquiler">
                                 </form>
-                                <form method="post" action="vaciarcarritoAlquiler.php">
+                                <form class=vaciarcarrito method="post" action="vaciarcarritoAlquiler.php">
                                     <input type="submit" class="btn btn-danger" value="Vaciar Carrito">
                                 </form>';
                     } else
@@ -225,7 +225,8 @@
                 </script>
             </div>
         </div>
-        <footer>
+        <?php $footerClass = 'absolute'; ?>
+        <footer class="<?php echo $footerClass; ?>">
             <div class="row item mt-2">
                 <div class="izq">
                     <h2>SERGIITR GAMES</h2>
@@ -261,5 +262,6 @@
                 </div>
             </div>
         </footer>
+        <script src="cambioFooter.js"></script>
     </body>
 </html>
