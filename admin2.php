@@ -4,9 +4,9 @@
     $username = "root";
     $password = "";
     $dbname = "tienda_videojuegos";
-    $conn = mysqli_connect($host, $username, $password, $dbname);
+    $conexion = mysqli_connect($host, $username, $password, $dbname);
 
-    if (!$conn)
+    if (!$conexion)
         die("Conexión fallida: " . mysqli_connect_error());
 
     // Crear el procedimiento almacenado para actualizar el stock
@@ -19,38 +19,38 @@
     ";
 
 
-    function obtenerJuegos($conn, $plataforma) {
+    function obtenerJuegos($conexion, $plataforma) {
         $sql = "SELECT idJuego, nombre, stock FROM juegos WHERE plataforma = ?";
-        $stmt = mysqli_prepare($conn, $sql);
-        if ($stmt) {
-            mysqli_stmt_bind_param($stmt, "s", $plataforma);
-            mysqli_stmt_execute($stmt);
-            $result = mysqli_stmt_get_result($stmt);
+        $llamadaProcedimiento = mysqli_prepare($conexion, $sql);
+        if ($llamadaProcedimiento) {
+            mysqli_stmt_bind_param($llamadaProcedimiento, "s", $plataforma);
+            mysqli_stmt_execute($llamadaProcedimiento);
+            $result = mysqli_stmt_get_result($llamadaProcedimiento);
             $juegos = [];
             while ($row = mysqli_fetch_assoc($result))
                 $juegos[] = $row;
-            mysqli_stmt_close($stmt);
+            mysqli_stmt_close($llamadaProcedimiento);
             return $juegos;
         } else {
-            echo "Error al preparar la consulta: " . mysqli_error($conn);
+            echo "Error al preparar la consulta: " . mysqli_error($conexion);
             return [];
         }
     }
 
-    function actualizarStock($conn, $id, $nuevoStock) {
-        $stmt = mysqli_prepare($conn, "CALL ActualizarStock(?, ?)");
-        if ($stmt) {
-            mysqli_stmt_bind_param($stmt, "ii", $id, $nuevoStock);
-            mysqli_stmt_execute($stmt);
-            mysqli_stmt_close($stmt);
+    function actualizarStock($conexion, $id, $nuevoStock) {
+        $llamadaProcedimiento = mysqli_prepare($conexion, "CALL ActualizarStock(?, ?)");
+        if ($llamadaProcedimiento) {
+            mysqli_stmt_bind_param($llamadaProcedimiento, "ii", $id, $nuevoStock);
+            mysqli_stmt_execute($llamadaProcedimiento);
+            mysqli_stmt_close($llamadaProcedimiento);
         } else
-            echo "Error al actualizar el stock: " . mysqli_error($conn);
+            echo "Error al actualizar el stock: " . mysqli_error($conexion);
     }
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['actualizar'])) {
         $id = $_POST['idJuego'];
         $nuevoStock = $_POST['nuevoStock'];
-        actualizarStock($conn, $id, $nuevoStock);
+        actualizarStock($conexion, $id, $nuevoStock);
         header('Location: admin2.php');
         exit();
     }
@@ -59,7 +59,7 @@
         $plataformas = array('xbox', 'ps5', 'pc', 'switch');
         $juegosPorPlataforma = array();
         foreach ($plataformas as $plataforma) {
-            $juegosPorPlataforma[$plataforma] = obtenerJuegos($conn, $plataforma);
+            $juegosPorPlataforma[$plataforma] = obtenerJuegos($conexion, $plataforma);
         }
     } else {
         header('Location: index.php');
@@ -228,7 +228,7 @@
                         </path>
                         </svg>
                     </a>
-                    <a class="social-link5">
+                    <a class="social-link5" href="https://stackoverflow.com/users/22172718/sergio-trillo">
                         <svg viewBox="0 0 16 16" class="bi bi-stack-overflow" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12.412 14.572V10.29h1.428V16H1v-5.71h1.428v4.282h9.984z"></path>
                         <path d="M3.857 13.145h7.137v-1.428H3.857v1.428zM10.254 0 9.108.852l4.26 5.727 1.146-.852L10.254 0zm-3.54 3.377 5.484 4.567.913-1.097L7.627 2.28l-.914 1.097zM4.922 6.55l6.47 3.013.603-1.294-6.47-3.013-.603 1.294zm-.925 3.344 6.985 1.469.294-1.398-6.985-1.468-.294 1.397z"></path>

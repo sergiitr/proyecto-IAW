@@ -17,9 +17,8 @@
         require_once "login.php";
         $conexion = mysqli_connect($host, $user, $pass, $database);
 
-        if (!$conexion) {
+        if (!$conexion) 
             die("Error de conexión: " . mysqli_connect_error());
-        }
 
         // Leer el contenido de la imagen
         $imagen_contenido = addslashes(file_get_contents($imagen_ruta));

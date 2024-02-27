@@ -158,6 +158,25 @@
                         $descuento = 0;
                         if (isset($_SESSION['usuario'])) {
                             $id_Usuario = $_SESSION["usuario"];
+                            $sqlCrearFuncion = "
+                                CREATE FUNCTION IF EXISTS DescuentoPorFidelidad(_idUsuario VARCHAR(50)) 
+                                RETURNS DECIMAL
+                                DETERMINISTIC
+                                BEGIN
+                                    DECLARE numPedidos INT;
+                                    DECLARE descuento DECIMAL(5,2);
+
+                                    SELECT COUNT(*) INTO numPedidos FROM compran WHERE idUsuario = _idUsuario;
+
+                                    IF numPedidos >= 3 THEN
+                                        SET descuento = 10.00; 
+                                    ELSE
+                                        SET descuento = 0.00; 
+                                    END IF;
+
+                                    RETURN descuento;
+                                END;
+                            ";
                             $resultadoDescuento = mysqli_query($conexion, "SELECT DescuentoPorFidelidad('$id_Usuario') AS descuento");
 
                             if ($resultadoDescuento) {
@@ -219,7 +238,7 @@
                                         </div>
                                         <div class="number-container">
                                             <label class="input-label" for="cardNumber">CARD NUMBER</label>
-                                            <input class="inputstyle" id="cardNumber" placeholder="XXXX XXXX XXXX XXXX" name="cardNumber" type="text" required />
+                                            <input class="inputstyle" id="cardNumber" placeholder="XXXX XXXX XXXX XXXX" name="cardNumber" pattern="[0-9]{12}" type="text" required />
                                         </div>
                                         
 
@@ -306,7 +325,7 @@
                         </path>
                         </svg>
                     </a>
-                    <a class="social-link5">
+                    <a class="social-link5" href="https://stackoverflow.com/users/22172718/sergio-trillo">
                         <svg viewBox="0 0 16 16" class="bi bi-stack-overflow" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12.412 14.572V10.29h1.428V16H1v-5.71h1.428v4.282h9.984z"></path>
                         <path d="M3.857 13.145h7.137v-1.428H3.857v1.428zM10.254 0 9.108.852l4.26 5.727 1.146-.852L10.254 0zm-3.54 3.377 5.484 4.567.913-1.097L7.627 2.28l-.914 1.097zM4.922 6.55l6.47 3.013.603-1.294-6.47-3.013-.603 1.294zm-.925 3.344 6.985 1.469.294-1.398-6.985-1.468-.294 1.397z"></path>

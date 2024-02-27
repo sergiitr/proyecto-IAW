@@ -96,17 +96,17 @@
                 });
             <?php } ?>
         </script>
-        <div class="ms-3">
+        <div class="container">
             <h2>Formulario de Producto</h2>
             <form action="insertar_producto.php" method="POST" enctype="multipart/form-data">
                 <label for="nombre">Nombre:</label><br>
-                <input type="text" id="nombre" name="nombre"><br><br>
+                <input type="text" id="nombre" name="nombre" required><br><br>
 
                 <label for="stock">Stock:</label><br>
-                <input type="number" id="stock" name="stock"><br><br>
+                <input type="number" id="stock" name="stock" required><br><br>
 
                 <label for="precio">Precio:</label><br>
-                <input type="text" id="precio" name="precio"><br><br>
+                <input type="text" id="precio" name="precio" required><br><br>
                 <label for="plataforma">Plataforma:</label><br>
                 <select id="plataforma" name="plataforma">
                     <option value="xbox">Xbox</option>
@@ -150,7 +150,7 @@
                     </div>
                     <input type="file" id="imagen" name="imagen" accept="image/png, image/jpeg, image/gif, image/jpg, image/webp">
                 </label><br>
-                <input type="submit" value="Guardar Producto">
+                <input type="submit" value="Guardar Producto" required>
             </form>
         </div>
         <div class="item mt-2">
@@ -179,7 +179,7 @@
                             </path>
                             </svg>
                         </a>
-                        <a class="social-link5">
+                        <a class="social-link5" href="https://stackoverflow.com/users/22172718/sergio-trillo">
                             <svg viewBox="0 0 16 16" class="bi bi-stack-overflow" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12.412 14.572V10.29h1.428V16H1v-5.71h1.428v4.282h9.984z"></path>
                             <path d="M3.857 13.145h7.137v-1.428H3.857v1.428zM10.254 0 9.108.852l4.26 5.727 1.146-.852L10.254 0zm-3.54 3.377 5.484 4.567.913-1.097L7.627 2.28l-.914 1.097zM4.922 6.55l6.47 3.013.603-1.294-6.47-3.013-.603 1.294zm-.925 3.344 6.985 1.469.294-1.398-6.985-1.468-.294 1.397z"></path>

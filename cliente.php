@@ -106,12 +106,11 @@
                 $pass = "";
                 $database = "tienda_videojuegos";
 
-                $conn = mysqli_connect($host, $user, $pass, $database);
+                $conexion = mysqli_connect($host, $user, $pass, $database);
 
                 // Verificar la conexión
-                if (!$conn) {
+                if (!$conexion)
                     die("La conexión falló: " . mysqli_connect_error());
-                }
 
                 // Obtener el ID del usuario
                 $idUsuario = $_SESSION["usuario"];
@@ -121,11 +120,11 @@
                 $inicioConsulta = ($paginaActual - 1) * $resultadosPorPagina;
 
                 // Obtener los pedidos del usuario
-                $stmt = mysqli_prepare($conn, "CALL ObtenerPedidosCliente(?)");
-                if ($stmt) {
-                    mysqli_stmt_bind_param($stmt, "s", $idUsuario);
-                    mysqli_stmt_execute($stmt);
-                    $result = mysqli_stmt_get_result($stmt);
+                $llamadaProcedimiento = mysqli_prepare($conexion, "CALL ObtenerPedidosCliente(?)");
+                if ($llamadaProcedimiento) {
+                    mysqli_stmt_bind_param($llamadaProcedimiento, "s", $idUsuario);
+                    mysqli_stmt_execute($llamadaProcedimiento);
+                    $result = mysqli_stmt_get_result($llamadaProcedimiento);
 
                     // Almacenar los pedidos agrupados por ID
                     $pedidosAgrupados = array();
@@ -156,13 +155,12 @@
                         </div>';
                     }
 
-                    mysqli_stmt_close($stmt);
-                } else {
-                    echo "Error al preparar la llamada al procedimiento almacenado: " . mysqli_error($conn);
-                }
+                    mysqli_stmt_close($llamadaProcedimiento);
+                } else
+                    echo "Error al preparar la llamada al procedimiento almacenado: " . mysqli_error($conexion);
 
                 // Cerrar la conexión
-                mysqli_close($conn);
+                mysqli_close($conexion);
             ?>
         </div>
         <br><br><br>
@@ -192,7 +190,7 @@
                         </path>
                         </svg>
                     </a>
-                    <a class="social-link5">
+                    <a class="social-link5" href="https://stackoverflow.com/users/22172718/sergio-trillo">
                         <svg viewBox="0 0 16 16" class="bi bi-stack-overflow" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12.412 14.572V10.29h1.428V16H1v-5.71h1.428v4.282h9.984z"></path>
                         <path d="M3.857 13.145h7.137v-1.428H3.857v1.428zM10.254 0 9.108.852l4.26 5.727 1.146-.852L10.254 0zm-3.54 3.377 5.484 4.567.913-1.097L7.627 2.28l-.914 1.097zM4.922 6.55l6.47 3.013.603-1.294-6.47-3.013-.603 1.294zm-.925 3.344 6.985 1.469.294-1.398-6.985-1.468-.294 1.397z"></path>
@@ -203,4 +201,5 @@
         </div>
         </footer>
         <script src="cambioFooter.js"></script>
+    </body>
 </html>
