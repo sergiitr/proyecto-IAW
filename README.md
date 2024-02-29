@@ -1,1 +1,2 @@
-Este proyecto se ha hecho para la 2ª evaluación de las asignaturas de Administración de sistemas gestores de bases de datos y del Implantación de aplicaciones web del curso 2023/2024. Ya está finalizado
+Este proyecto se ha hecho para la 2ª evaluación de las asignaturas de Administración de sistemas gestores de bases de datos y del Implantación de aplicaciones web del curso 2023/2024. Ya está finalizado.
+Para ver el proyecto en su totalidad, es necesario poner los archivos del proyecto en el directorio de localhost que tu servidor web utiliza para servir páginas. Esto suele ser el directorio www o htdocs dentro de la carpeta de instalación de tu servidor web, como Apache o Nginx.
